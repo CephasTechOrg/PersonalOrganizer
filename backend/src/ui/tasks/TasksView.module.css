@@ -1,0 +1,165 @@
+.wrap {
+  max-width: 1000px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.subtitle {
+  font-size: 14.5px;
+  color: var(--text-muted);
+  margin-top: 5px;
+}
+
+.controls {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 24px 0 16px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.tabs {
+  display: flex;
+  gap: 2px;
+}
+
+.tab {
+  border: none;
+  background: none;
+  padding: 9px 12px 11px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: -1px;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+}
+
+.tab:hover {
+  color: var(--text-secondary);
+}
+
+.tab[data-active="true"] {
+  color: var(--text);
+  border-bottom-color: var(--brand);
+}
+
+.count {
+  font-weight: 700;
+  color: var(--text-faint);
+  margin-left: 6px;
+}
+
+.filters {
+  display: flex;
+  gap: 7px;
+  padding-bottom: 8px;
+}
+
+.select {
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--border-strong);
+  background: var(--surface);
+}
+
+.checkbox[data-done="true"] {
+  background: #12b76a;
+  border-color: #12b76a;
+}
+
+.body {
+  min-width: 0;
+  flex: 1;
+}
+
+.taskTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.taskTitle[data-done="true"] {
+  color: var(--text-faint);
+  text-decoration: line-through;
+}
+
+.context {
+  font-size: 12.5px;
+  color: var(--text-faint);
+  margin-top: 3px;
+}
+
+.due {
+  font-size: 12.5px;
+  font-weight: 600;
+  width: 96px;
+  text-align: right;
+  color: var(--text-muted);
+}
+
+.due[data-tone="overdue"] {
+  color: var(--danger);
+}
+.due[data-tone="soon"] {
+  color: var(--warning);
+}
+
+.actionSpacer {
+  width: 92px;
+}
+
+@media (max-width: 720px) {
+  .due {
+    width: auto;
+  }
+
+  .actionSpacer {
+    display: none;
+  }
+
+  .context {
+    display: none;
+  }
+}

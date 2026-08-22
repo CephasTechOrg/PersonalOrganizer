@@ -1,0 +1,224 @@
+.page {
+  max-width: 1320px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 24px;
+  align-items: start;
+}
+
+.mainCol {
+  min-width: 0;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.back:hover {
+  color: var(--text);
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.headBody {
+  min-width: 0;
+  flex: 1;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.org {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.chips {
+  display: flex;
+  gap: 7px;
+  margin-top: 11px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.deadlineBox {
+  text-align: right;
+}
+
+.deadlineLabel {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.deadlineValue {
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 3px;
+  color: var(--text-secondary);
+}
+
+.deadlineValue[data-tone="overdue"] {
+  color: var(--danger);
+}
+.deadlineValue[data-tone="soon"] {
+  color: var(--warning);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 22px;
+  flex-wrap: wrap;
+}
+
+.urlCard {
+  margin-top: 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.urlBody {
+  min-width: 0;
+  flex: 1;
+}
+
+.urlLabel {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.url {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.infoRow {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 18px;
+  padding: 20px 2px 22px;
+  border-bottom: 1px solid var(--border);
+  margin-top: 20px;
+}
+
+.infoKey {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.infoVal {
+  font-size: 13.5px;
+  font-weight: 600;
+  margin-top: 5px;
+  color: var(--text-secondary);
+}
+
+.descBlock {
+  margin-top: 22px;
+}
+
+.blockTitle {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.desc {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin-top: 10px;
+  white-space: pre-wrap;
+}
+
+.twoCol {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+  margin-top: 26px;
+}
+
+.rail {
+  display: grid;
+  gap: 18px;
+}
+
+.facts {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.factKey {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  font-weight: 600;
+}
+
+.factVal {
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 2px;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 1080px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .head {
+    flex-wrap: wrap;
+  }
+
+  .deadlineBox {
+    text-align: left;
+  }
+
+  .infoRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .twoCol {
+    grid-template-columns: 1fr;
+  }
+}

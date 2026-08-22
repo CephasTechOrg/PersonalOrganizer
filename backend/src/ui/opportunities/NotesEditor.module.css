@@ -1,0 +1,15 @@
+.area {
+  min-height: 120px;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--text-faint);
+}

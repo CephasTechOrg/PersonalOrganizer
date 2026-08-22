@@ -1,0 +1,1685 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #f6f7f9; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  a { color: #2563eb; text-decoration: none; }
+  a:hover { color: #1d4ed8; text-decoration: underline; }
+  input, select, textarea, button { font-family: inherit; font-size: inherit; }
+  ::placeholder { color: #98a2b3; }
+  @keyframes phShimmer { 0% { background-position: -320px 0 } 100% { background-position: 320px 0 } }
+  @keyframes phFade { from { opacity: 0; transform: translateY(4px) } to { opacity: 1; transform: none } }
+  @keyframes phToast { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: none } }
+  @keyframes phPanel { from { opacity: 0; transform: translateX(12px) } to { opacity: 1; transform: none } }
+</style>
+</helmet>
+
+<div style="font-family: 'Manrope', system-ui, sans-serif; color: #101828; font-variant-numeric: tabular-nums; min-height: 100vh; background: #f6f7f9;">
+
+  <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+    <div style="min-height: 100vh; display: grid; place-items: center; background: #f4f5f7; padding: 32px 20px;">
+      <div style="width: 100%; max-width: 392px;">
+        <div style="display: flex; align-items: center; gap: 10px; justify-content: center; margin-bottom: 34px;">
+          <div style="width: 30px; height: 30px; border-radius: 9px; background: #2563eb; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 15px;">P</div>
+          <div style="font-size: 18px; font-weight: 700; letter-spacing: -0.02em;">Personal Hub</div>
+        </div>
+        <div style="background: #fff; border: 1px solid #e7e9ee; border-radius: 14px; padding: 30px 28px 26px; box-shadow: 0 1px 2px rgba(16,24,40,0.04);">
+          <div style="font-size: 22px; font-weight: 700; letter-spacing: -0.02em;">Welcome back</div>
+          <div style="font-size: 14px; color: #667085; margin-top: 6px;">Sign in to access your personal workspace.</div>
+          <div style="display: grid; gap: 16px; margin-top: 26px;">
+            <label style="display: grid; gap: 6px;">
+              <span style="font-size: 13px; font-weight: 600; color: #344054;">Email</span>
+              <input type="email" value="cephas@personalhub.app" style="height: 40px; padding: 0 12px; border: 1px solid #d6dae1; border-radius: 9px; outline: none; color: #101828; background: #fff;" style-focus="height: 40px; padding: 0 12px; border: 1px solid #2563eb; border-radius: 9px; outline: none; color: #101828; background: #fff; box-shadow: 0 0 0 3px rgba(37,99,235,0.14);">
+            </label>
+            <label style="display: grid; gap: 6px;">
+              <span style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: #344054;">Password</span>
+              <input type="password" value="••••••••••" style="height: 40px; padding: 0 12px; border: 1px solid #d6dae1; border-radius: 9px; outline: none; color: #101828; background: #fff;" style-focus="height: 40px; padding: 0 12px; border: 1px solid #2563eb; border-radius: 9px; outline: none; color: #101828; background: #fff; box-shadow: 0 0 0 3px rgba(37,99,235,0.14);">
+            </label>
+            <button type="button" onClick="{{ signIn }}" style="height: 42px; border: none; border-radius: 9px; background: #2563eb; color: #fff; font-weight: 600; font-size: 14px; cursor: pointer; margin-top: 4px;" style-hover="height: 42px; border: none; border-radius: 9px; background: #1d4ed8; color: #fff; font-weight: 600; font-size: 14px; cursor: pointer; margin-top: 4px;">Sign In</button>
+          </div>
+          <div style="text-align: center; margin-top: 18px;">
+            <a href="#" style="font-size: 13px; color: #667085;">Forgot password?</a>
+          </div>
+        </div>
+        <div style="text-align: center; font-size: 12px; color: #98a2b3; margin-top: 20px;">Private workspace · single account</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isDesktopApp }}">
+    <div style="display: flex; min-height: 100vh;">
+
+      <aside style="width: 236px; flex: 0 0 236px; background: #fff; border-right: 1px solid #ecedf1; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 22px 20px 18px;">
+          <div style="width: 28px; height: 28px; border-radius: 8px; background: #2563eb; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 14px;">P</div>
+          <div style="font-size: 15px; font-weight: 700; letter-spacing: -0.01em;">Personal Hub</div>
+        </div>
+
+        <nav style="display: flex; flex-direction: column; gap: 2px; padding: 6px 12px;">
+          <button type="button" onClick="{{ goHome }}" style="display: flex; align-items: center; gap: 11px; height: 38px; padding: 0 11px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left; background: {{ navHomeBg }}; color: {{ navHomeFg }};">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V20H4z"></path></svg>
+            Home
+          </button>
+          <button type="button" onClick="{{ goInbox }}" style="display: flex; align-items: center; gap: 11px; height: 38px; padding: 0 11px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left; background: {{ navInboxBg }}; color: {{ navInboxFg }};">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 6.5h17v11h-17z"></path><path d="m3.5 6.5 8.5 6.5 8.5-6.5"></path></svg>
+            Inbox
+            <span style="margin-left: auto; font-size: 11px; font-weight: 700; color: #475467; background: #f2f4f7; border-radius: 20px; padding: 2px 7px;">5</span>
+          </button>
+          <button type="button" onClick="{{ goOpps }}" style="display: flex; align-items: center; gap: 11px; height: 38px; padding: 0 11px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left; background: {{ navOppsBg }}; color: {{ navOppsFg }};">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5h17v11h-17z"></path><path d="M9 8.5v-2h6v2"></path></svg>
+            Opportunities
+          </button>
+          <button type="button" onClick="{{ goTasks }}" style="display: flex; align-items: center; gap: 11px; height: 38px; padding: 0 11px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left; background: {{ navTasksBg }}; color: {{ navTasksFg }};">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 4.5h15v15h-15z"></path><path d="m8.5 12 2.5 2.5 4.5-5"></path></svg>
+            Tasks
+          </button>
+          <button type="button" onClick="{{ goCal }}" style="display: flex; align-items: center; gap: 11px; height: 38px; padding: 0 11px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left; background: {{ navCalBg }}; color: {{ navCalFg }};">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v14H4z"></path><path d="M8 3.5v4M16 3.5v4M4 10.5h16"></path></svg>
+            Calendar
+          </button>
+          <button type="button" onClick="{{ goArchive }}" style="display: flex; align-items: center; gap: 11px; height: 38px; padding: 0 11px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left; background: {{ navArchBg }}; color: {{ navArchFg }};">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5h17v3.5h-17z"></path><path d="M5.5 9v9.5h13V9"></path><path d="M10 13h4"></path></svg>
+            Archive
+          </button>
+          <button type="button" onClick="{{ goSettings }}" style="display: flex; align-items: center; gap: 11px; height: 38px; padding: 0 11px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left; background: {{ navSetBg }}; color: {{ navSetFg }};">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 4v2.2M12 17.8V20M4 12h2.2M17.8 12H20M6.3 6.3l1.6 1.6M16.1 16.1l1.6 1.6M17.7 6.3l-1.6 1.6M7.9 16.1l-1.6 1.6"></path></svg>
+            Settings
+          </button>
+        </nav>
+
+        <div style="margin-top: auto; padding: 14px;">
+          <button type="button" onClick="{{ openCapture }}" style="width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 40px; padding: 0 12px; border: 1px solid #dbe3f5; border-radius: 9px; background: #f5f8ff; color: #1d4ed8; font-size: 13px; font-weight: 700; cursor: pointer;" style-hover="width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 40px; padding: 0 12px; border: 1px solid #c6d5f7; border-radius: 9px; background: #eef4ff; color: #1d4ed8; font-size: 13px; font-weight: 700; cursor: pointer;">
+            Quick Capture
+            <span style="font-size: 11px; font-weight: 600; color: #667085; background: #fff; border: 1px solid #e4e7ec; border-radius: 5px; padding: 2px 6px;">⌘K</span>
+          </button>
+        </div>
+      </aside>
+
+      <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+
+        <header style="height: 64px; flex: 0 0 64px; background: #fff; border-bottom: 1px solid #ecedf1; display: flex; align-items: center; gap: 12px; padding: 0 26px; position: sticky; top: 0; z-index: 20;">
+          <div style="position: relative; flex: 1; max-width: 560px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#98a2b3" stroke-width="2" stroke-linecap="round" style="position: absolute; left: 12px; top: 11px;"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+            <input type="text" placeholder="Search opportunities, tasks, or notes..." style="width: 100%; height: 38px; padding: 0 12px 0 34px; border: 1px solid #e2e5ea; border-radius: 9px; background: #fafbfc; outline: none; font-size: 13.5px;" style-focus="width: 100%; height: 38px; padding: 0 12px 0 34px; border: 1px solid #2563eb; border-radius: 9px; background: #fff; outline: none; font-size: 13.5px; box-shadow: 0 0 0 3px rgba(37,99,235,0.12);">
+          </div>
+          <div style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
+            <button type="button" onClick="{{ openAdd }}" style="display: flex; align-items: center; gap: 7px; height: 38px; padding: 0 15px; border: none; border-radius: 9px; background: #2563eb; color: #fff; font-size: 13.5px; font-weight: 600; cursor: pointer;" style-hover="display: flex; align-items: center; gap: 7px; height: 38px; padding: 0 15px; border: none; border-radius: 9px; background: #1d4ed8; color: #fff; font-size: 13.5px; font-weight: 600; cursor: pointer;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+              Add
+            </button>
+            <button type="button" style="width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid #e7e9ee; border-radius: 9px; background: #fff; cursor: pointer; position: relative;" style-hover="width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid #d6dae1; border-radius: 9px; background: #fafbfc; cursor: pointer; position: relative;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#475467" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15V10a6 6 0 1 0-12 0v5l-1.5 2.5h15z"></path><path d="M10 18.5a2 2 0 0 0 4 0"></path></svg>
+              <span style="position: absolute; top: 8px; right: 9px; width: 6px; height: 6px; border-radius: 50%; background: #2563eb;"></span>
+            </button>
+            <div style="width: 34px; height: 34px; border-radius: 50%; background: #101828; color: #fff; display: grid; place-items: center; font-size: 12.5px; font-weight: 700; cursor: pointer;">CA</div>
+          </div>
+        </header>
+
+        <main style="flex: 1; padding: 30px 26px 48px;">
+
+          <sc-if value="{{ isHome }}">
+            <div style="max-width: 1320px; display: grid; grid-template-columns: minmax(0,1fr) 324px; gap: 26px; align-items: start;">
+              <div style="min-width: 0;">
+                <div style="font-size: 28px; font-weight: 700; letter-spacing: -0.025em;">Good afternoon, {{ ownerFirst }}</div>
+                <div style="font-size: 14.5px; color: #667085; margin-top: 5px;">Here’s what needs your attention.</div>
+
+                <div style="display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 1px; background: #e9ebef; border: 1px solid #e9ebef; border-radius: 12px; overflow: hidden; margin-top: 22px;">
+                  <sc-for list="{{ summary }}" as="s" hint-placeholder-count="5">
+                    <button type="button" onClick="{{ s.onClick }}" style="border: none; background: #fff; text-align: left; padding: 14px 16px 15px; cursor: pointer; display: block;" style-hover="border: none; background: #fbfcfd; text-align: left; padding: 14px 16px 15px; cursor: pointer; display: block;">
+                      <div style="display: flex; align-items: center; gap: 7px;">
+                        <span style="width: 7px; height: 7px; border-radius: 50%; background: {{ s.dot }};"></span>
+                        <span style="font-size: 12.5px; font-weight: 600; color: #475467;">{{ s.label }}</span>
+                      </div>
+                      <div style="font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin-top: 8px;">{{ s.value }}</div>
+                      <div style="font-size: 12px; margin-top: 3px; color: {{ s.metaColor }};">{{ s.meta }}</div>
+                    </button>
+                  </sc-for>
+                </div>
+
+                <div style="display: flex; align-items: baseline; justify-content: space-between; margin: 30px 0 12px;">
+                  <div style="display: flex; align-items: center; gap: 9px;">
+                    <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.015em;">Needs attention</span>
+                    <span style="font-size: 11.5px; font-weight: 700; color: #b42318; background: #fef3f2; border-radius: 20px; padding: 2px 8px;">{{ attentionCount }}</span>
+                  </div>
+                  <a href="#" onClick="{{ goOpps }}" style="font-size: 13px; font-weight: 600;">View all</a>
+                </div>
+
+                <div style="background: #fff; border: 1px solid #e9ebef; border-radius: 12px; overflow: hidden;">
+                  <sc-for list="{{ attention }}" as="a" hint-placeholder-count="3">
+                    <div style="display: flex; align-items: center; gap: 14px; padding: 15px 18px; border-top: 1px solid #f1f2f5; border-left: 3px solid {{ a.edge }};">
+                      <div style="width: 36px; height: 36px; flex: 0 0 36px; border-radius: 9px; display: grid; place-items: center; font-size: 12.5px; font-weight: 800; background: {{ a.orgBg }}; color: {{ a.orgFg }};">{{ a.mono }}</div>
+                      <div style="min-width: 0; flex: 1;">
+                        <div style="font-size: 14.5px; font-weight: 700; letter-spacing: -0.01em;">{{ a.title }}</div>
+                        <div style="font-size: 12.5px; color: #667085; margin-top: 3px;">{{ a.org }} · {{ a.type }} · <span style="color: {{ a.relColor }}; font-weight: 600;">{{ a.rel }}</span></div>
+                      </div>
+                      <div style="font-size: 12px; font-weight: 600; color: #475467;">{{ a.reason }}</div>
+                      <button type="button" onClick="{{ a.onAct }}" style="height: 34px; padding: 0 15px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: {{ a.btnBorder }}; background: {{ a.btnBg }}; color: {{ a.btnFg }};">{{ a.action }}</button>
+                    </div>
+                  </sc-for>
+                  <sc-if value="{{ noAttention }}">
+                    <div style="padding: 44px 20px; text-align: center;">
+                      <div style="font-size: 15px; font-weight: 700;">You’re caught up</div>
+                      <div style="font-size: 13px; color: #667085; margin-top: 4px;">No applications need your attention right now.</div>
+                    </div>
+                  </sc-if>
+                </div>
+
+                <sc-if value="{{ showPipeline }}">
+                  <div style="margin-top: 26px; background: #fff; border: 1px solid #e9ebef; border-radius: 12px; padding: 16px 18px 18px;">
+                    <div style="display: flex; align-items: baseline; justify-content: space-between;">
+                      <span style="font-size: 14px; font-weight: 700;">Pipeline</span>
+                      <a href="#" onClick="{{ goOpps }}" style="font-size: 12.5px; font-weight: 600;">View all opportunities</a>
+                    </div>
+                    <div style="display: flex; gap: 3px; margin-top: 12px;">
+                      <sc-for list="{{ pipeline }}" as="p" hint-placeholder-count="5">
+                        <div style="flex: {{ p.flex }}; min-width: 4px;">
+                          <div style="height: 5px; border-radius: 3px; background: {{ p.color }};"></div>
+                          <div style="font-size: 12px; color: #475467; margin-top: 8px; font-weight: 600;">{{ p.label }}</div>
+                          <div style="font-size: 12px; color: #98a2b3; margin-top: 1px;">{{ p.value }} · {{ p.pct }}</div>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <div style="display: flex; align-items: baseline; justify-content: space-between; margin: 30px 0 12px;">
+                  <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.015em;">Recent inbox</span>
+                  <a href="#" onClick="{{ goInbox }}" style="font-size: 13px; font-weight: 600;">View inbox</a>
+                </div>
+                <div style="background: #fff; border: 1px solid #e9ebef; border-radius: 12px; overflow: hidden;">
+                  <sc-for list="{{ recentInbox }}" as="i" hint-placeholder-count="3">
+                    <div style="display: flex; align-items: center; gap: 13px; padding: 13px 18px; border-top: 1px solid #f1f2f5;">
+                      <div style="width: 30px; height: 30px; flex: 0 0 30px; border-radius: 8px; background: #f2f4f7; color: #475467; display: grid; place-items: center; font-size: 11px; font-weight: 800;">{{ i.mono }}</div>
+                      <div style="min-width: 0; flex: 1;">
+                        <div style="font-size: 13.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ i.title }}</div>
+                        <div style="font-size: 12px; color: #98a2b3; margin-top: 2px;">{{ i.source }}</div>
+                      </div>
+                      <span style="font-size: 11.5px; font-weight: 600; color: #475467; background: #f2f4f7; border-radius: 6px; padding: 3px 8px;">{{ i.kind }}</span>
+                      <span style="font-size: 12px; color: #98a2b3; width: 52px; text-align: right;">{{ i.ago }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="display: grid; gap: 20px;">
+                <div style="background: #fff; border: 1px solid #e9ebef; border-radius: 12px; padding: 16px 16px 12px;">
+                  <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px;">
+                    <span style="font-size: 15px; font-weight: 700;">Upcoming deadlines</span>
+                    <a href="#" onClick="{{ goCal }}" style="font-size: 12.5px; font-weight: 600;">View all</a>
+                  </div>
+                  <sc-for list="{{ deadlines }}" as="d" hint-placeholder-count="5">
+                    <div style="display: flex; gap: 12px; padding: 11px 0; border-top: 1px solid #f1f2f5;">
+                      <div style="width: 42px; flex: 0 0 42px; text-align: center;">
+                        <div style="font-size: 10px; font-weight: 800; letter-spacing: 0.06em; color: #98a2b3;">{{ d.mon }}</div>
+                        <div style="font-size: 17px; font-weight: 700; line-height: 1.1;">{{ d.day }}</div>
+                      </div>
+                      <div style="min-width: 0; flex: 1;">
+                        <div style="font-size: 13.5px; font-weight: 600; letter-spacing: -0.01em;">{{ d.title }}</div>
+                        <div style="font-size: 12px; color: #98a2b3; margin-top: 2px;">{{ d.org }}</div>
+                        <div style="font-size: 11.5px; font-weight: 700; margin-top: 5px; display: inline-block; border-radius: 6px; padding: 2px 7px; background: {{ d.relBg }}; color: {{ d.relColor }};">{{ d.rel }}</div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+
+                <div style="background: #fff; border: 1px solid #e9ebef; border-radius: 12px; padding: 16px 16px 8px;">
+                  <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px;">
+                    <span style="font-size: 15px; font-weight: 700;">Tasks</span>
+                    <a href="#" onClick="{{ goTasks }}" style="font-size: 12.5px; font-weight: 600;">View all tasks</a>
+                  </div>
+                  <sc-for list="{{ taskSnapshot }}" as="t" hint-placeholder-count="4">
+                    <div style="display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-top: 1px solid #f1f2f5;">
+                      <button type="button" onClick="{{ t.onToggle }}" style="width: 17px; height: 17px; flex: 0 0 17px; margin-top: 1px; border-radius: 5px; cursor: pointer; display: grid; place-items: center; border: 1.5px solid {{ t.boxBorder }}; background: {{ t.boxBg }};">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" style="opacity: {{ t.checkOpacity }};"><path d="m5 12.5 4.5 4.5L19 7"></path></svg>
+                      </button>
+                      <div style="min-width: 0; flex: 1;">
+                        <div style="font-size: 13.5px; font-weight: 600; text-decoration: {{ t.strike }}; color: {{ t.titleColor }};">{{ t.title }}</div>
+                        <div style="font-size: 12px; color: #98a2b3; margin-top: 2px;">{{ t.context }}</div>
+                      </div>
+                      <span style="font-size: 12px; font-weight: 600; color: {{ t.dueColor }};">{{ t.due }}</span>
+                    </div>
+                  </sc-for>
+                  <button type="button" onClick="{{ openTask }}" style="width: 100%; margin: 6px 0 8px; height: 34px; border: 1px dashed #d6dae1; border-radius: 8px; background: #fff; color: #475467; font-size: 13px; font-weight: 600; cursor: pointer;" style-hover="width: 100%; margin: 6px 0 8px; height: 34px; border: 1px dashed #b8c0cc; border-radius: 8px; background: #fafbfc; color: #344054; font-size: 13px; font-weight: 600; cursor: pointer;">+ Add task</button>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isInbox }}">
+            <div style="max-width: 980px;">
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
+                <div>
+                  <div style="font-size: 28px; font-weight: 700; letter-spacing: -0.025em;">Inbox</div>
+                  <div style="font-size: 14.5px; color: #667085; margin-top: 5px;">Recently captured items waiting to be organized.</div>
+                </div>
+                <button type="button" onClick="{{ openCapture }}" style="height: 38px; padding: 0 15px; border: none; border-radius: 9px; background: #2563eb; color: #fff; font-size: 13.5px; font-weight: 600; cursor: pointer;" style-hover="height: 38px; padding: 0 15px; border: none; border-radius: 9px; background: #1d4ed8; color: #fff; font-size: 13.5px; font-weight: 600; cursor: pointer;">+ Quick Capture</button>
+              </div>
+
+              <div style="display: flex; gap: 6px; margin: 24px 0 16px; border-bottom: 1px solid #e9ebef;">
+                <sc-for list="{{ inboxTabs }}" as="t" hint-placeholder-count="5">
+                  <button type="button" onClick="{{ t.onClick }}" style="border: none; background: none; padding: 9px 12px 11px; font-size: 13.5px; font-weight: 600; cursor: pointer; border-bottom: 2px solid {{ t.line }}; color: {{ t.fg }}; margin-bottom: -1px;">{{ t.label }}<span style="font-weight: 700; color: #98a2b3; margin-left: 6px;">{{ t.count }}</span></button>
+                </sc-for>
+              </div>
+
+              <div style="background: #fff; border: 1px solid #e9ebef; border-radius: 12px; overflow: hidden;">
+                <sc-for list="{{ inboxItems }}" as="i" hint-placeholder-count="5">
+                  <div style="display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px; border-top: 1px solid #f1f2f5;">
+                    <div style="width: 34px; height: 34px; flex: 0 0 34px; border-radius: 9px; background: #f2f4f7; color: #475467; display: grid; place-items: center; font-size: 11.5px; font-weight: 800;">{{ i.mono }}</div>
+                    <div style="min-width: 0; flex: 1;">
+                      <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 14.5px; font-weight: 700; letter-spacing: -0.01em;">{{ i.title }}</span>
+                        <span style="font-size: 11px; font-weight: 700; border-radius: 6px; padding: 2px 7px; background: {{ i.kindBg }}; color: {{ i.kindFg }};">{{ i.kind }}</span>
+                      </div>
+                      <div style="font-size: 13px; color: #667085; margin-top: 4px; max-width: 560px;">{{ i.desc }}</div>
+                      <div style="font-size: 12px; color: #98a2b3; margin-top: 6px;">{{ i.source }} · captured {{ i.ago }}</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 7px;">
+                      <button type="button" onClick="{{ i.onConvert }}" style="height: 32px; padding: 0 12px; border: 1px solid #d6dae1; border-radius: 8px; background: #fff; color: #344054; font-size: 12.5px; font-weight: 600; cursor: pointer; white-space: nowrap;" style-hover="height: 32px; padding: 0 12px; border: 1px solid #b8c0cc; border-radius: 8px; background: #fafbfc; color: #101828; font-size: 12.5px; font-weight: 600; cursor: pointer; white-space: nowrap;">{{ i.convertLabel }}</button>
+                      <button type="button" onClick="{{ i.onArchive }}" style="height: 32px; padding: 0 12px; border: none; border-radius: 8px; background: none; color: #667085; font-size: 12.5px; font-weight: 600; cursor: pointer;" style-hover="height: 32px; padding: 0 12px; border: none; border-radius: 8px; background: #f2f4f7; color: #344054; font-size: 12.5px; font-weight: 600; cursor: pointer;">Archive</button>
+                    </div>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ inboxEmpty }}">
+                  <div style="padding: 56px 20px; text-align: center;">
+                    <div style="font-size: 15px; font-weight: 700;">Inbox zero</div>
+                    <div style="font-size: 13px; color: #667085; margin-top: 4px;">Everything you captured has been organized.</div>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isOpps }}">
+            <div style="display: flex; gap: 22px; align-items: flex-start;">
+              <div style="flex: 1; min-width: 0; max-width: 1240px;">
+                <div style="font-size: 28px; font-weight: 700; letter-spacing: -0.025em;">Opportunities</div>
+                <div style="font-size: 14.5px; color: #667085; margin-top: 5px;">Track applications, programs, funding, internships, and upcoming opportunities.</div>
+
+                <div style="display: flex; gap: 2px; margin: 22px 0 0; border-bottom: 1px solid #e9ebef; overflow-x: auto;">
+                  <sc-for list="{{ oppTabs }}" as="t" hint-placeholder-count="8">
+                    <button type="button" onClick="{{ t.onClick }}" style="border: none; background: none; padding: 9px 12px 11px; font-size: 13.5px; font-weight: 600; cursor: pointer; white-space: nowrap; margin-bottom: -1px; border-bottom: 2px solid {{ t.line }}; color: {{ t.fg }};">{{ t.label }}<span style="font-weight: 700; color: #98a2b3; margin-left: 6px;">{{ t.count }}</span></button>
+                  </sc-for>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px 0 14px;">
+                  <div style="position: relative; width: 236px;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#98a2b3" stroke-width="2" stroke-linecap="round" style="position: absolute; left: 11px; top: 10px;"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+                    <input type="text" placeholder="Search opportunities" value="{{ query }}" onInput="{{ onQuery }}" style="width: 100%; height: 34px; padding: 0 10px 0 32px; border: 1px solid #e2e5ea; border-radius: 8px; background: #fff; outline: none; font-size: 13px;" style-focus="width: 100%; height: 34px; padding: 0 10px 0 32px; border: 1px solid #2563eb; border-radius: 8px; background: #fff; outline: none; font-size: 13px; box-shadow: 0 0 0 3px rgba(37,99,235,0.12);">
+                  </div>
+                  <select style="height: 34px; padding: 0 8px; border: 1px solid #e2e5ea; border-radius: 8px; background: #fff; font-size: 13px; color: #344054; cursor: pointer;"><option>Category</option><option>Internship</option><option>Fellowship</option><option>Grant</option><option>Hackathon</option><option>Conference</option></select>
+                  <select style="height: 34px; padding: 0 8px; border: 1px solid #e2e5ea; border-radius: 8px; background: #fff; font-size: 13px; color: #344054; cursor: pointer;"><option>Priority</option><option>High</option><option>Medium</option><option>Low</option></select>
+                  <select style="height: 34px; padding: 0 8px; border: 1px solid #e2e5ea; border-radius: 8px; background: #fff; font-size: 13px; color: #344054; cursor: pointer;"><option>Deadline</option><option>This week</option><option>This month</option><option>Overdue</option><option>Rolling</option></select>
+                  <select style="height: 34px; padding: 0 8px; border: 1px solid #e2e5ea; border-radius: 8px; background: #fff; font-size: 13px; color: #344054; cursor: pointer;"><option>Source</option><option>Newsletter</option><option>Careers site</option><option>Referral</option></select>
+                  <div style="margin-left: auto; display: flex; align-items: center; gap: 8px;">
+                    <select style="height: 34px; padding: 0 8px; border: 1px solid #e2e5ea; border-radius: 8px; background: #fff; font-size: 13px; color: #344054; cursor: pointer;"><option>Sort: Deadline soonest</option><option>Sort: Recently added</option><option>Sort: Recently updated</option><option>Sort: Priority</option></select>
+                    <button type="button" onClick="{{ resetFilters }}" style="height: 34px; padding: 0 10px; border: none; background: none; color: #667085; font-size: 13px; font-weight: 600; cursor: pointer;" style-hover="height: 34px; padding: 0 10px; border: none; background: #f2f4f7; border-radius: 8px; color: #344054; font-size: 13px; font-weight: 600; cursor: pointer;">Reset filters</button>
+                  </div>
+                </div>
+
+                <div style="background: #fff; border: 1px solid #e9ebef; border-radius: 12px; overflow: hidden;">
+                  <div style="display: grid; grid-template-columns: minmax(0,2.3fr) 1.1fr 0.9fr 1.1fr 0.9fr 0.6fr 118px; gap: 12px; padding: 10px 18px; background: #fbfcfd; border-bottom: 1px solid #eceef2; font-size: 11.5px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: #98a2b3;">
+                    <div>Opportunity</div><div>Organization</div><div>Type</div><div>Deadline</div><div>Status</div><div>Priority</div><div></div>
+                  </div>
+
+                  <sc-if value="{{ loading }}">
+                    <sc-for list="{{ skeletons }}" as="s" hint-placeholder-count="6">
+                      <div style="display: grid; grid-template-columns: minmax(0,2.3fr) 1.1fr 0.9fr 1.1fr 0.9fr 0.6fr 118px; gap: 12px; padding: 17px 18px; border-bottom: 1px solid #f3f4f7;">
+                        <div style="height: 12px; border-radius: 6px; background: linear-gradient(90deg,#f1f2f5,#e6e8ec,#f1f2f5); background-size: 320px 100%; animation: phShimmer 1.2s linear infinite;"></div>
+                        <div style="height: 12px; border-radius: 6px; background: #f1f2f5;"></div>
+                        <div style="height: 12px; border-radius: 6px; background: #f1f2f5;"></div>
+                        <div style="height: 12px; border-radius: 6px; background: #f1f2f5;"></div>
+                        <div style="height: 12px; border-radius: 6px; background: #f1f2f5;"></div>
+                        <div style="height: 12px; border-radius: 6px; background: #f1f2f5;"></div>
+                        <div style="height: 26px; border-radius: 7px; background: #f1f2f5;"></div>
+                      </div>
+                    </sc-for>
+                  </sc-if>
+
+                  <sc-for list="{{ rows }}" as="o" hint-placeholder-count="8">
+                    <div onClick="{{ o.onSelect }}" style="display: grid; grid-template-columns: minmax(0,2.3fr) 1.1fr 0.9fr 1.1fr 0.9fr 0.6fr 118px; gap: 12px; align-items: center; padding: 13px 18px; border-bottom: 1px solid #f3f4f7; cursor: pointer; background: {{ o.rowBg }}; box-shadow: {{ o.rowRing }};" style-hover="display: grid; grid-template-columns: minmax(0,2.3fr) 1.1fr 0.9fr 1.1fr 0.9fr 0.6fr 118px; gap: 12px; align-items: center; padding: 13px 18px; border-bottom: 1px solid #f3f4f7; cursor: pointer; background: #fafbfc;">
+                      <div style="display: flex; align-items: center; gap: 11px; min-width: 0;">
+                        <div style="width: 30px; height: 30px; flex: 0 0 30px; border-radius: 8px; display: grid; place-items: center; font-size: 11px; font-weight: 800; background: {{ o.orgBg }}; color: {{ o.orgFg }};">{{ o.mono }}</div>
+                        <div style="min-width: 0;">
+                          <div style="font-size: 13.5px; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ o.title }}</div>
+                          <div style="font-size: 11.5px; color: #98a2b3; margin-top: 2px;">{{ o.note }}</div>
+                        </div>
+                      </div>
+                      <div style="font-size: 13px; color: #475467; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ o.org }}</div>
+                      <div><span style="font-size: 11.5px; font-weight: 600; color: #475467; background: #f2f4f7; border-radius: 6px; padding: 3px 8px; white-space: nowrap;">{{ o.type }}</span></div>
+                      <div>
+                        <div style="font-size: 13px; color: #344054;">{{ o.dateLabel }}</div>
+                        <div style="font-size: 11.5px; font-weight: 600; margin-top: 2px; color: {{ o.relColor }};">{{ o.rel }}</div>
+                      </div>
+                      <div><span style="font-size: 11.5px; font-weight: 700; border-radius: 6px; padding: 3px 8px; white-space: nowrap; background: {{ o.statusBg }}; color: {{ o.statusFg }};">{{ o.statusLabel }}</span></div>
+                      <div style="font-size: 12.5px; font-weight: 600; color: {{ o.priColor }};">{{ o.pri }}</div>
+                      <div>
+                        <button type="button" onClick="{{ o.onAct }}" style="height: 32px; width: 100%; border-radius: 8px; font-size: 12.5px; font-weight: 600; cursor: pointer; border: {{ o.btnBorder }}; background: {{ o.btnBg }}; color: {{ o.btnFg }};">{{ o.action }}</button>
+                      </div>
+                    </div>
+                  </sc-for>
+
+                  <sc-if value="{{ rowsEmpty }}">
+                    <div style="padding: 64px 20px; text-align: center;">
+                      <div style="font-size: 15px; font-weight: 700;">No opportunities found</div>
+                      <div style="font-size: 13px; color: #667085; margin-top: 4px;">No opportunities match these filters.</div>
+                      <button type="button" onClick="{{ resetFilters }}" style="margin-top: 14px; height: 34px; padding: 0 14px; border: 1px solid #d6dae1; border-radius: 8px; background: #fff; font-size: 13px; font-weight: 600; cursor: pointer;">Reset filters</button>
+                    </div>
+                  </sc-if>
+
+                  <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; background: #fbfcfd;">
+                    <span style="font-size: 12.5px; color: #667085;">{{ rowsLabel }}</span>
+                    <div style="display: flex; gap: 5px;">
+                      <button type="button" style="width: 30px; height: 30px; border: 1px solid #e2e5ea; border-radius: 7px; background: #fff; color: #667085; cursor: pointer;">‹</button>
+                      <button type="button" style="width: 30px; height: 30px; border: 1px solid #2563eb; border-radius: 7px; background: #2563eb; color: #fff; font-size: 12.5px; font-weight: 700; cursor: pointer;">1</button>
+                      <button type="button" style="width: 30px; height: 30px; border: 1px solid #e2e5ea; border-radius: 7px; background: #fff; color: #475467; font-size: 12.5px; font-weight: 600; cursor: pointer;">2</button>
+                      <button type="button" style="width: 30px; height: 30px; border: 1px solid #e2e5ea; border-radius: 7px; background: #fff; color: #667085; cursor: pointer;">›</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <sc-if value="{{ panelOpen }}">
+                <aside style="width: 366px; flex: 0 0 366px; background: #fff; border: 1px solid #e9ebef; border-radius: 12px; position: sticky; top: 90px; max-height: calc(100vh - 120px); overflow-y: auto; animation: phPanel 0.18s ease-out;">
+                  <div style="padding: 18px 18px 0; display: flex; align-items: flex-start; gap: 12px;">
+                    <div style="width: 38px; height: 38px; flex: 0 0 38px; border-radius: 9px; display: grid; place-items: center; font-size: 13px; font-weight: 800; background: {{ sel.orgBg }}; color: {{ sel.orgFg }};">{{ sel.mono }}</div>
+                    <div style="min-width: 0; flex: 1;">
+                      <div style="font-size: 15.5px; font-weight: 700; letter-spacing: -0.015em;">{{ sel.title }}</div>
+                      <div style="font-size: 12.5px; color: #667085; margin-top: 2px;">{{ sel.org }} · {{ sel.type }}</div>
+                      <div style="display: flex; gap: 6px; margin-top: 9px;">
+                        <span style="font-size: 11.5px; font-weight: 700; border-radius: 6px; padding: 3px 8px; background: {{ sel.statusBg }}; color: {{ sel.statusFg }};">{{ sel.statusLabel }}</span>
+                        <span style="font-size: 11.5px; font-weight: 700; border-radius: 6px; padding: 3px 8px; background: {{ sel.priBg }}; color: {{ sel.priColor }};">{{ sel.pri }} priority</span>
+                      </div>
+                    </div>
+                    <button type="button" onClick="{{ closePanel }}" style="width: 26px; height: 26px; border: none; background: none; color: #98a2b3; font-size: 17px; line-height: 1; cursor: pointer; border-radius: 6px;" style-hover="width: 26px; height: 26px; border: none; background: #f2f4f7; color: #344054; font-size: 17px; line-height: 1; cursor: pointer; border-radius: 6px;">×</button>
+                  </div>
+
+                  <div style="display: flex; gap: 8px; padding: 16px 18px;">
+                    <button type="button" onClick="{{ sel.onAct }}" style="flex: 1; height: 36px; border: none; border-radius: 8px; background: #2563eb; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;" style-hover="flex: 1; height: 36px; border: none; border-radius: 8px; background: #1d4ed8; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;">{{ sel.action }}</button>
+                    <button type="button" onClick="{{ openSource }}" style="flex: 1; height: 36px; border: 1px solid #d6dae1; border-radius: 8px; background: #fff; color: #344054; font-size: 13px; font-weight: 600; cursor: pointer;" style-hover="flex: 1; height: 36px; border: 1px solid #b8c0cc; border-radius: 8px; background: #fafbfc; color: #101828; font-size: 13px; font-weight: 600; cursor: pointer;">Open source</button>
+                  </div>
+
+                  <div style="display: flex; gap: 2px; padding: 0 18px; border-bottom: 1px solid #eceef2;">
+                    <sc-for list="{{ detailTabs }}" as="t" hint-placeholder-count="4">
+                      <button type="button" onClick="{{ t.onClick }}" style="border: none; background: none; padding: 8px 10px 10px; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: -1px; border-bottom: 2px solid {{ t.line }}; color: {{ t.fg }};">{{ t.label }}</button>
+                    </sc-for>
+                  </div>
+
+                  <div style="padding: 16px 18px 20px;">
+                    <sc-if value="{{ tabDetails }}">
+                      <div>
+                        <div style="font-size: 13px; color: #475467; line-height: 1.6;">{{ sel.desc }}</div>
+                        <div style="display: grid; gap: 10px; margin-top: 16px;">
+                          <sc-for list="{{ sel.facts }}" as="f" hint-placeholder-count="6">
+                            <div style="display: flex; justify-content: space-between; gap: 14px; font-size: 12.5px;">
+                              <span style="color: #98a2b3; font-weight: 600;">{{ f.k }}</span>
+                              <span style="text-align: right; font-weight: 600; color: {{ f.color }};">{{ f.v }}</span>
+                            </div>
+                          </sc-for>
+                        </div>
+                        <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #f1f2f5;">
+                          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                            <span style="font-size: 13.5px; font-weight: 700;">Application checklist</span>
+                            <span style="font-size: 12px; color: #667085; font-weight: 600;">{{ sel.checkLabel }}</span>
+                          </div>
+                          <div style="height: 5px; border-radius: 3px; background: #eceef2; margin-top: 9px; overflow: hidden;">
+                            <div style="height: 5px; border-radius: 3px; background: #12b76a; width: {{ sel.checkPct }};"></div>
+                          </div>
+                          <div style="margin-top: 12px; display: grid; gap: 9px;">
+                            <sc-for list="{{ sel.checklist }}" as="c" hint-placeholder-count="5">
+                              <div style="display: flex; align-items: center; gap: 9px;">
+                                <button type="button" onClick="{{ c.onToggle }}" style="width: 16px; height: 16px; flex: 0 0 16px; border-radius: 4px; cursor: pointer; display: grid; place-items: center; border: 1.5px solid {{ c.boxBorder }}; background: {{ c.boxBg }};">
+                                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" style="opacity: {{ c.checkOpacity }};"><path d="m5 12.5 4.5 4.5L19 7"></path></svg>
+                                </button>
+                                <span style="font-size: 13px; font-weight: 500; color: {{ c.color }}; text-decoration: {{ c.strike }};">{{ c.title }}</span>
+                              </div>
+                            </sc-for>
+                          </div>
+                        </div>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ tabTasks }}">
+                      <div style="display: grid; gap: 10px;">
+                        <sc-for list="{{ sel.checklist }}" as="c" hint-placeholder-count="4">
+                          <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid #f3f4f7;">
+                            <button type="button" onClick="{{ c.onToggle }}" style="width: 16px; height: 16px; flex: 0 0 16px; border-radius: 4px; cursor: pointer; display: grid; place-items: center; border: 1.5px solid {{ c.boxBorder }}; background: {{ c.boxBg }};">
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" style="opacity: {{ c.checkOpacity }};"><path d="m5 12.5 4.5 4.5L19 7"></path></svg>
+                            </button>
+                            <span style="flex: 1; font-size: 13px; font-weight: 500; color: {{ c.color }}; text-decoration: {{ c.strike }};">{{ c.title }}</span>
+                            <span style="font-size: 12px; color: #98a2b3;">{{ c.due }}</span>
+                          </div>
+                        </sc-for>
+                        <button type="button" onClick="{{ openTask }}" style="height: 34px; border: 1px dashed #d6dae1; border-radius: 8px; background: #fff; color: #475467; font-size: 13px; font-weight: 600; cursor: pointer;">+ Add task</button>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ tabNotes }}">
+                      <div>
+                        <div style="background: #fbfcfd; border: 1px solid #eceef2; border-radius: 10px; padding: 12px 13px;">
+                          <div style="font-size: 13px; color: #344054; line-height: 1.6;">{{ sel.note1 }}</div>
+                          <div style="font-size: 11.5px; color: #98a2b3; margin-top: 8px;">Aug 20, 2026 · personal</div>
+                        </div>
+                        <textarea placeholder="Add a note..." style="width: 100%; margin-top: 12px; min-height: 84px; padding: 10px 12px; border: 1px solid #e2e5ea; border-radius: 9px; outline: none; font-size: 13px; resize: vertical; color: #101828;"></textarea>
+                        <button type="button" onClick="{{ saveNote }}" style="margin-top: 8px; height: 34px; padding: 0 14px; border: none; border-radius: 8px; background: #2563eb; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; float: right;">Save note</button>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ tabActivity }}">
+                      <div style="display: grid; gap: 0;">
+                        <sc-for list="{{ activity }}" as="a" hint-placeholder-count="5">
+                          <div style="display: flex; gap: 11px; padding-bottom: 16px;">
+                            <div style="display: flex; flex-direction: column; align-items: center; flex: 0 0 8px;">
+                              <span style="width: 8px; height: 8px; border-radius: 50%; background: {{ a.dot }}; margin-top: 5px;"></span>
+                              <span style="flex: 1; width: 1px; background: #eceef2; margin-top: 4px;"></span>
+                            </div>
+                            <div style="min-width: 0;">
+                              <div style="font-size: 13px; font-weight: 600;">{{ a.title }}</div>
+                              <div style="font-size: 12px; color: #98a2b3; margin-top: 2px;">{{ a.when }}</div>
+                            </div>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </sc-if>
+                    <button type="button" onClick="{{ goDetail }}" style="width: 100%; margin-top: 6px; height: 34px; border: 1px solid #d6dae1; border-radius: 8px; background: #fff; color: #344054; font-size: 13px; font-weight: 600; cursor: pointer;" style-hover="width: 100%; margin-top: 6px; height: 34px; border: 1px solid #b8c0cc; border-radius: 8px; background: #fafbfc; color: #101828; font-size: 13px; font-weight: 600; cursor: pointer;">Open full workspace →</button>
+                  </div>
+                </aside>
+              </sc-if>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isDetail }}">
+            <div style="max-width: 1320px; display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 24px; align-items: start;">
+              <div style="min-width: 0;">
+                <button type="button" onClick="{{ goOpps }}" style="display: flex; align-items: center; gap: 7px; border: none; background: none; padding: 0; font-size: 13px; font-weight: 600; color: #667085; cursor: pointer;" style-hover="display: flex; align-items: center; gap: 7px; border: none; background: none; padding: 0; font-size: 13px; font-weight: 600; color: #101828; cursor: pointer;">← Back to opportunities</button>
+
+                <div style="display: flex; align-items: flex-start; gap: 16px; margin-top: 20px;">
+                  <div style="width: 52px; height: 52px; flex: 0 0 52px; border-radius: 12px; display: grid; place-items: center; font-size: 16px; font-weight: 800; background: {{ sel.orgBg }}; color: {{ sel.orgFg }};">{{ sel.mono }}</div>
+                  <div style="min-width: 0; flex: 1;">
+                    <div style="font-size: 26px; font-weight: 700; letter-spacing: -0.025em;">{{ sel.title }}</div>
+                    <div style="font-size: 14px; color: #667085; margin-top: 4px;">{{ sel.org }} · {{ sel.type }}</div>
+                    <div style="display: flex; gap: 7px; margin-top: 11px; flex-wrap: wrap;">
+                      <span style="font-size: 12px; font-weight: 700; border-radius: 6px; padding: 4px 9px; background: {{ sel.statusBg }}; color: {{ sel.statusFg }};">{{ sel.statusLabel }}</span>
+                      <span style="font-size: 12px; font-weight: 700; border-radius: 6px; padding: 4px 9px; background: {{ sel.priBg }}; color: {{ sel.priColor }};">{{ sel.pri }} priority</span>
+                      <span style="font-size: 12px; font-weight: 700; border-radius: 6px; padding: 4px 9px; background: {{ sel.relBg }}; color: {{ sel.relColor }};">{{ sel.rel }}</span>
+                    </div>
+                  </div>
+                  <div style="text-align: right; display: grid; gap: 10px;">
+                    <div>
+                      <div style="font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #98a2b3;">Deadline</div>
+                      <div style="font-size: 14px; font-weight: 700; margin-top: 3px; color: {{ sel.relColor }};">{{ sel.dateLabel }}</div>
+                    </div>
+                    <div>
+                      <div style="font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #98a2b3;">Follow-up</div>
+                      <div style="font-size: 14px; font-weight: 600; margin-top: 3px; color: #344054;">{{ sel.followUp }}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-top: 22px; flex-wrap: wrap;">
+                  <button type="button" onClick="{{ applyNow }}" style="height: 38px; padding: 0 16px; border: none; border-radius: 9px; background: #2563eb; color: #fff; font-size: 13.5px; font-weight: 600; cursor: pointer;" style-hover="height: 38px; padding: 0 16px; border: none; border-radius: 9px; background: #1d4ed8; color: #fff; font-size: 13.5px; font-weight: 600; cursor: pointer;">Apply now ↗</button>
+                  <button type="button" onClick="{{ openSource }}" style="height: 38px; padding: 0 14px; border: 1px solid #d6dae1; border-radius: 9px; background: #fff; color: #344054; font-size: 13.5px; font-weight: 600; cursor: pointer;" style-hover="height: 38px; padding: 0 14px; border: 1px solid #b8c0cc; border-radius: 9px; background: #fafbfc; color: #101828; font-size: 13.5px; font-weight: 600; cursor: pointer;">Open source link ↗</button>
+                  <button type="button" onClick="{{ openApplied }}" style="height: 38px; padding: 0 14px; border: 1px solid #d6dae1; border-radius: 9px; background: #fff; color: #344054; font-size: 13.5px; font-weight: 600; cursor: pointer;" style-hover="height: 38px; padding: 0 14px; border: 1px solid #b8c0cc; border-radius: 9px; background: #fafbfc; color: #101828; font-size: 13.5px; font-weight: 600; cursor: pointer;">Mark applied</button>
+                  <button type="button" onClick="{{ openTask }}" style="height: 38px; padding: 0 14px; border: none; border-radius: 9px; background: none; color: #475467; font-size: 13.5px; font-weight: 600; cursor: pointer;" style-hover="height: 38px; padding: 0 14px; border: none; border-radius: 9px; background: #f2f4f7; color: #101828; font-size: 13.5px; font-weight: 600; cursor: pointer;">+ Add task</button>
+                </div>
+
+                <div style="margin-top: 22px; background: #fff; border: 1px solid #e9ebef; border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 14px;">
+                  <div style="min-width: 0; flex: 1;">
+                    <div style="font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #98a2b3;">Application URL</div>
+                    <a href="#" style="display: block; font-size: 13.5px; font-weight: 600; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ sel.applyUrl }}</a>
+                  </div>
+                  <button type="button" onClick="{{ applyNow }}" style="height: 32px; padding: 0 13px; border: 1px solid #d6dae1; border-radius: 8px; background: #fff; color: #344054; font-size: 12.5px; font-weight: 600; cursor: pointer;">Open</button>
+                  <button type="button" onClick="{{ copyLink }}" style="height: 32px; padding: 0 13px; border: 1px solid #d6dae1; border-radius: 8px; background: #fff; color: #344054; font-size: 12.5px; font-weight: 600; cursor: pointer;">Copy</button>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 18px; padding: 20px 2px 22px; border-bottom: 1px solid #e9ebef;">
+                  <sc-for list="{{ sel.infoRow }}" as="f" hint-placeholder-count="5">
+                    <div>
+                      <div style="font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #98a2b3;">{{ f.k }}</div>
+                      <div style="font-size: 13.5px; font-weight: 600; margin-top: 5px; color: #344054;">{{ f.v }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+
+                <div style="display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 20px; margin-top: 24px;">
+                  <div>
+                    <div style="display: flex; align-items: baseline; justify-content: space-between;">
+                      <span style="font-size: 17px; font-weight: 700; letter-spacing: -0.015em;">Tasks</span>
+                      <span style="font-size: 12.5px; color: #667085; font-weight: 600;">{{ sel.checkLabel }}</span>
+                    </div>
+                    <div style="margin-top: 12px; display: grid; gap: 0;">
+                      <sc-for list="{{ sel.checklist }}" as="c" hint-placeholder-count="5">
+                        <div style="display: flex; align-items: center; gap: 10px; padding: 11px 0; border-top: 1px solid #f1f2f5;">
+                          <button type="button" onClick="{{ c.onToggle }}" style="width: 17px; height: 17px; flex: 0 0 17px; border-radius: 5px; cursor: pointer; display: grid; place-items: center; border: 1.5px solid {{ c.boxBorder }}; background: {{ c.boxBg }};">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" style="opacity: {{ c.checkOpacity }};"><path d="m5 12.5 4.5 4.5L19 7"></path></svg>
+                          </button>
+                          <span style="flex: 1; font-size: 13.5px; font-weight: 500; color: {{ c.color }}; text-decoration: {{ c.strike }};">{{ c.title }}</span>
+                          <span style="font-size: 12px; color: #98a2b3;">{{ c.due }}</span>
+                          <sc-if value="{{ c.hasAction }}">
+                            <button type="button" onClick="{{ c.onAction }}" style="height: 28px; padding: 0 11px; border: 1px solid #d6dae1; border-radius: 7px; background: #fff; color: #344054; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap;">{{ c.actionLabel }}</button>
+                          </sc-if>
+                        </div>
+                      </sc-for>
+                    </div>
+                    <button type="button" onClick="{{ openTask }}" style="width: 100%; margin-top: 12px; height: 34px; border: 1px dashed #d6dae1; border-radius: 8px; background: #fff; color: #475467; font-size: 13px; font-weight: 600; cursor: pointer;">+ Add task</button>
+                  </div>
+
+                  <div>
+                    <div style="font-size: 17px; font-weight: 700; letter-spacing: -0.015em;">Notes</div>
+                    <div style="margin-top: 12px; background: #fff; border: 1px solid #e9ebef; border-radius: 11px; overflow: hidden;">
+                      <div style="display: flex; gap: 3px; padding: 8px 10px; border-bottom: 1px solid #f1f2f5;">
+                        <span style="width: 26px; height: 26px; display: grid; place-items: center; border-radius: 6px; font-size: 12.5px; font-weight: 800; color: #475467; cursor: pointer;">B</span>
+                        <span style="width: 26px; height: 26px; display: grid; place-items: center; border-radius: 6px; font-size: 12.5px; font-style: italic; color: #475467; cursor: pointer;">I</span>
+                        <span style="width: 26px; height: 26px; display: grid; place-items: center; border-radius: 6px; font-size: 12.5px; text-decoration: underline; color: #475467; cursor: pointer;">U</span>
+                        <span style="width: 26px; height: 26px; display: grid; place-items: center; border-radius: 6px; font-size: 13px; color: #475467; cursor: pointer;">•</span>
+                        <span style="width: 26px; height: 26px; display: grid; place-items: center; border-radius: 6px; font-size: 12px; color: #475467; cursor: pointer;">1.</span>
+                      </div>
+                      <div style="padding: 12px 14px; font-size: 13.5px; color: #344054; line-height: 1.65;">{{ sel.note1 }}</div>
+                      <textarea placeholder="Add notes about this opportunity..." style="width: 100%; min-height: 88px; padding: 0 14px 12px; border: none; outline: none; font-size: 13.5px; resize: vertical; color: #101828;"></textarea>
+                      <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-top: 1px solid #f1f2f5; background: #fbfcfd;">
+                        <span style="font-size: 12px; color: #98a2b3;">Last updated 2h ago</span>
+                        <button type="button" onClick="{{ saveNote }}" style="height: 32px; padding: 0 13px; border: 1px solid #d6dae1; border-radius: 8px; background: #fff; color: #344054; font-size: 12.5px; font-weight: 600; cursor: pointer;">Save note</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="margin-top: 30px;">
+                  <div style="font-size: 17px; font-weight: 700; letter-spacing: -0.015em;">Activity</div>
+                  <div style="margin-top: 14px;">
+                    <sc-for list="{{ activity }}" as="a" hint-placeholder-count="5">
+                      <div style="display: flex; gap: 12px;">
+                        <div style="display: flex; flex-direction: column; align-items: center; flex: 0 0 8px;">
+                          <span style="width: 8px; height: 8px; border-radius: 50%; background: {{ a.dot }}; margin-top: 5px;"></span>
+                          <span style="flex: 1; width: 1px; background: #eceef2; margin: 4px 0;"></span>
+                        </div>
+                        <div style="min-width: 0; flex: 1; padding-bottom: 18px;">
+                          <div style="display: flex; justify-content: space-between; gap: 12px;">
+                            <span style="font-size: 13.5px; font-weight: 600;">{{ a.title }}</span>
+                            <span style="font-size: 12px; color: #98a2b3; white-space: nowrap;">{{ a.when }}</span>
+                          </div>
+                          <div style="font-size: 12.5px; color: #667085; margin-top: 3px;">{{ a.desc }}</div>
+                        </div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display: grid; gap: 18px;">
+                <div style="background: #fff; border: 1px solid #e9ebef; border-radius: 12px; padding: 16px;">
+                  <div style="font-size: 14.5px; font-weight: 700;">Quick facts</div>
+                  <div style="display: grid; gap: 12px; margin-top: 12px;">
+                    <sc-for list="{{ sel.facts }}" as="f" hint-placeholder-count="6">
+                      <div>
+                        <div style="font-size: 11.5px; color: #98a2b3; font-weight: 600;">{{ f.k }}</div>
+                        <div style="font-size: 13px; font-weight: 600; margin-top: 2px; color: {{ f.color }};">{{ f.v }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="background: #fff; border: 1px solid #e9ebef; border-radius: 12px; padding: 16px 16px 8px;">
+                  <div style="font-size: 14.5px; font-weight: 700;">Next up</div>
+                  <sc-for list="{{ nextUp }}" as="d" hint-placeholder-count="3">
+                    <div style="display: flex; gap: 11px; padding: 11px 0; border-top: 1px solid #f1f2f5;">
+                      <div style="width: 30px; height: 30px; flex: 0 0 30px; border-radius: 8px; display: grid; place-items: center; font-size: 11px; font-weight: 800; background: {{ d.orgBg }}; color: {{ d.orgFg }};">{{ d.mono }}</div>
+                      <div style="min-width: 0; flex: 1;">
+                        <div style="font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ d.title }}</div>
+                        <div style="font-size: 11.5px; font-weight: 600; margin-top: 3px; color: {{ d.relColor }};">{{ d.rel }}</div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isTasks }}">
+            <div style="max-width: 1000px;">
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
+                <div>
+                  <div style="font-size: 28px; font-weight: 700; letter-spacing: -0.025em;">Tasks</div>
+                  <div style="font-size: 14.5px; color: #667085; margin-top: 5px;">Everything you need to complete, from applications and personal work.</div>
+                </div>
+                <button type="button" onClick="{{ openTask }}" style="height: 38px; padding: 0 15px; border: none; border-radius: 9px; background: #2563eb; color: #fff; font-size: 13.5px; font-weight: 600; cursor: pointer;" style-hover="height: 38px; padding: 0 15px; border: none; border-radius: 9px; background: #1d4ed8; color: #fff; font-size: 13.5px; font-weight: 600; cursor: pointer;">+ Add Task</button>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 6px; margin: 24px 0 16px; border-bottom: 1px solid #e9ebef;">
+                <sc-for list="{{ taskTabs }}" as="t" hint-placeholder-count="5">
+                  <button type="button" onClick="{{ t.onClick }}" style="border: none; background: none; padding: 9px 12px 11px; font-size: 13.5px; font-weight: 600; cursor: pointer; margin-bottom: -1px; border-bottom: 2px solid {{ t.line }}; color: {{ t.fg }};">{{ t.label }}<span style="font-weight: 700; color: #98a2b3; margin-left: 6px;">{{ t.count }}</span></button>
+                </sc-for>
+                <div style="margin-left: auto; display: flex; gap: 7px; padding-bottom: 8px;">
+                  <select style="height: 32px; padding: 0 8px; border: 1px solid #e2e5ea; border-radius: 8px; background: #fff; font-size: 12.5px; color: #344054; cursor: pointer;"><option>All opportunities</option><option>Personal only</option></select>
+                  <select style="height: 32px; padding: 0 8px; border: 1px solid #e2e5ea; border-radius: 8px; background: #fff; font-size: 12.5px; color: #344054; cursor: pointer;"><option>All types</option><option>Apply</option><option>Download</option><option>Review</option><option>Contact</option><option>Attend</option><option>Complete</option></select>
+                </div>
+              </div>
+
+              <div style="background: #fff; border: 1px solid #e9ebef; border-radius: 12px; overflow: hidden;">
+                <sc-for list="{{ taskRows }}" as="t" hint-placeholder-count="6">
+                  <div style="display: flex; align-items: center; gap: 13px; padding: 14px 18px; border-top: 1px solid #f1f2f5;">
+                    <button type="button" onClick="{{ t.onToggle }}" style="width: 18px; height: 18px; flex: 0 0 18px; border-radius: 5px; cursor: pointer; display: grid; place-items: center; border: 1.5px solid {{ t.boxBorder }}; background: {{ t.boxBg }};">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" style="opacity: {{ t.checkOpacity }};"><path d="m5 12.5 4.5 4.5L19 7"></path></svg>
+                    </button>
+                    <div style="min-width: 0; flex: 1;">
+                      <div style="font-size: 14px; font-weight: 600; text-decoration: {{ t.strike }}; color: {{ t.titleColor }};">{{ t.title }}</div>
+                      <div style="font-size: 12.5px; color: #98a2b3; margin-top: 3px;">{{ t.context }}</div>
+                    </div>
+                    <span style="font-size: 11.5px; font-weight: 600; color: #475467; background: #f2f4f7; border-radius: 6px; padding: 3px 8px;">{{ t.type }}</span>
+                    <span style="font-size: 12.5px; font-weight: 600; width: 92px; text-align: right; color: {{ t.dueColor }};">{{ t.due }}</span>
+                    <button type="button" onClick="{{ t.onAction }}" style="height: 32px; padding: 0 12px; border: 1px solid #d6dae1; border-radius: 8px; background: #fff; color: #344054; font-size: 12.5px; font-weight: 600; cursor: pointer; white-space: nowrap; min-width: 132px;" style-hover="height: 32px; padding: 0 12px; border: 1px solid #b8c0cc; border-radius: 8px; background: #fafbfc; color: #101828; font-size: 12.5px; font-weight: 600; cursor: pointer; white-space: nowrap; min-width: 132px;">{{ t.actionLabel }}</button>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ tasksEmpty }}">
+                  <div style="padding: 56px 20px; text-align: center;">
+                    <div style="font-size: 15px; font-weight: 700;">Nothing here</div>
+                    <div style="font-size: 13px; color: #667085; margin-top: 4px;">No tasks in this view.</div>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isCal }}">
+            <div style="max-width: 1320px;">
+              <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 16px;">
+                <div>
+                  <div style="font-size: 28px; font-weight: 700; letter-spacing: -0.025em;">Calendar</div>
+                  <div style="font-size: 14.5px; color: #667085; margin-top: 5px;">Deadlines, follow-ups, and events in one timeline.</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div style="display: flex; gap: 2px; padding: 3px; background: #f2f4f7; border-radius: 9px;">
+                    <sc-for list="{{ calTabs }}" as="t" hint-placeholder-count="3">
+                      <button type="button" onClick="{{ t.onClick }}" style="height: 30px; padding: 0 14px; border: none; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; background: {{ t.bg }}; color: {{ t.fg }}; box-shadow: {{ t.shadow }};">{{ t.label }}</button>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 22px; margin-top: 24px; align-items: start;">
+                <div style="background: #fff; border: 1px solid #e9ebef; border-radius: 12px; overflow: hidden;">
+                  <div style="display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid #eceef2;">
+                    <span style="font-size: 15.5px; font-weight: 700;">August 2026</span>
+                    <div style="margin-left: auto; display: flex; gap: 6px;">
+                      <button type="button" style="width: 30px; height: 30px; border: 1px solid #e2e5ea; border-radius: 7px; background: #fff; color: #667085; cursor: pointer;">‹</button>
+                      <button type="button" style="height: 30px; padding: 0 12px; border: 1px solid #e2e5ea; border-radius: 7px; background: #fff; color: #344054; font-size: 12.5px; font-weight: 600; cursor: pointer;">Today</button>
+                      <button type="button" style="width: 30px; height: 30px; border: 1px solid #e2e5ea; border-radius: 7px; background: #fff; color: #667085; cursor: pointer;">›</button>
+                    </div>
+                  </div>
+                  <sc-if value="{{ calMonth }}">
+                    <div>
+                      <div style="display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); border-bottom: 1px solid #eceef2;">
+                        <sc-for list="{{ weekdays }}" as="w" hint-placeholder-count="7">
+                          <div style="padding: 8px 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #98a2b3;">{{ w.label }}</div>
+                        </sc-for>
+                      </div>
+                      <div style="display: grid; grid-template-columns: repeat(7, minmax(0,1fr));">
+                        <sc-for list="{{ calCells }}" as="c" hint-placeholder-count="35">
+                          <div style="min-height: 96px; padding: 7px 8px; border-right: 1px solid #f3f4f7; border-bottom: 1px solid #f3f4f7; background: {{ c.bg }};">
+                            <div style="font-size: 12px; font-weight: 700; color: {{ c.numColor }}; display: inline-grid; place-items: center; width: 21px; height: 21px; border-radius: 50%; background: {{ c.numBg }};">{{ c.day }}</div>
+                            <div style="display: grid; gap: 3px; margin-top: 5px;">
+                              <sc-for list="{{ c.events }}" as="e" hint-placeholder-count="0">
+                                <div style="display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; border-radius: 5px; padding: 3px 5px; background: {{ e.bg }}; color: {{ e.fg }}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                  <span style="width: 5px; height: 5px; border-radius: 50%; flex: 0 0 5px; background: {{ e.dot }};"></span>{{ e.title }}
+                                </div>
+                              </sc-for>
+                            </div>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ calAgendaView }}">
+                    <div>
+                      <sc-for list="{{ agenda }}" as="a" hint-placeholder-count="6">
+                        <div style="display: flex; gap: 14px; padding: 14px 18px; border-bottom: 1px solid #f3f4f7;">
+                          <div style="width: 52px; flex: 0 0 52px;">
+                            <div style="font-size: 10px; font-weight: 800; letter-spacing: 0.06em; color: #98a2b3;">{{ a.mon }}</div>
+                            <div style="font-size: 18px; font-weight: 700; line-height: 1.1;">{{ a.day }}</div>
+                          </div>
+                          <div style="min-width: 0; flex: 1;">
+                            <div style="font-size: 14px; font-weight: 700;">{{ a.title }}</div>
+                            <div style="font-size: 12.5px; color: #667085; margin-top: 3px;">{{ a.org }} · {{ a.kind }}</div>
+                          </div>
+                          <span style="font-size: 11.5px; font-weight: 700; border-radius: 6px; padding: 3px 8px; height: 22px; background: {{ a.bg }}; color: {{ a.fg }};">{{ a.rel }}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                </div>
+
+                <div style="background: #fff; border: 1px solid #e9ebef; border-radius: 12px; padding: 16px 16px 10px;">
+                  <div style="font-size: 14.5px; font-weight: 700;">This week</div>
+                  <sc-for list="{{ deadlines }}" as="d" hint-placeholder-count="5">
+                    <div style="display: flex; gap: 11px; padding: 11px 0; border-top: 1px solid #f1f2f5;">
+                      <div style="width: 38px; flex: 0 0 38px; text-align: center;">
+                        <div style="font-size: 10px; font-weight: 800; color: #98a2b3;">{{ d.mon }}</div>
+                        <div style="font-size: 16px; font-weight: 700; line-height: 1.1;">{{ d.day }}</div>
+                      </div>
+                      <div style="min-width: 0; flex: 1;">
+                        <div style="font-size: 13px; font-weight: 600;">{{ d.title }}</div>
+                        <div style="font-size: 11.5px; font-weight: 600; margin-top: 3px; color: {{ d.relColor }};">{{ d.rel }}</div>
+                      </div>
+                    </div>
+                  </sc-for>
+                  <div style="display: flex; gap: 14px; flex-wrap: wrap; padding: 14px 0 8px; border-top: 1px solid #f1f2f5; margin-top: 6px;">
+                    <sc-for list="{{ legend }}" as="l" hint-placeholder-count="4">
+                      <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #667085; font-weight: 600;">
+                        <span style="width: 7px; height: 7px; border-radius: 50%; background: {{ l.color }};"></span>{{ l.label }}
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isArchive }}">
+            <div style="max-width: 900px;">
+              <div style="font-size: 28px; font-weight: 700; letter-spacing: -0.025em;">Archive</div>
+              <div style="font-size: 14.5px; color: #667085; margin-top: 5px;">Opportunities and tasks you’re finished with.</div>
+
+              <div style="display: flex; align-items: center; gap: 10px; margin: 24px 0 16px;">
+                <div style="display: flex; gap: 2px; padding: 3px; background: #f2f4f7; border-radius: 9px;">
+                  <sc-for list="{{ archTabs }}" as="t" hint-placeholder-count="2">
+                    <button type="button" onClick="{{ t.onClick }}" style="height: 30px; padding: 0 14px; border: none; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; background: {{ t.bg }}; color: {{ t.fg }}; box-shadow: {{ t.shadow }};">{{ t.label }}</button>
+                  </sc-for>
+                </div>
+                <div style="position: relative; width: 230px; margin-left: auto;">
+                  <input type="text" placeholder="Search archive" style="width: 100%; height: 34px; padding: 0 12px; border: 1px solid #e2e5ea; border-radius: 8px; background: #fff; outline: none; font-size: 13px;">
+                </div>
+              </div>
+
+              <div style="background: #fff; border: 1px solid #eceef2; border-radius: 12px; overflow: hidden;">
+                <sc-for list="{{ archiveRows }}" as="a" hint-placeholder-count="5">
+                  <div style="display: flex; align-items: center; gap: 13px; padding: 14px 18px; border-top: 1px solid #f3f4f7;">
+                    <div style="width: 30px; height: 30px; flex: 0 0 30px; border-radius: 8px; background: #f2f4f7; color: #98a2b3; display: grid; place-items: center; font-size: 11px; font-weight: 800;">{{ a.mono }}</div>
+                    <div style="min-width: 0; flex: 1;">
+                      <div style="font-size: 13.5px; font-weight: 600; color: #475467;">{{ a.title }}</div>
+                      <div style="font-size: 12px; color: #a6adba; margin-top: 2px;">{{ a.meta }}</div>
+                    </div>
+                    <span style="font-size: 11.5px; font-weight: 600; color: #667085; background: #f4f5f7; border-radius: 6px; padding: 3px 8px;">{{ a.state }}</span>
+                    <button type="button" onClick="{{ a.onRestore }}" style="height: 30px; padding: 0 12px; border: 1px solid #e2e5ea; border-radius: 8px; background: #fff; color: #344054; font-size: 12.5px; font-weight: 600; cursor: pointer;" style-hover="height: 30px; padding: 0 12px; border: 1px solid #b8c0cc; border-radius: 8px; background: #fafbfc; color: #101828; font-size: 12.5px; font-weight: 600; cursor: pointer;">Restore</button>
+                    <button type="button" onClick="{{ a.onDelete }}" style="height: 30px; padding: 0 10px; border: none; border-radius: 8px; background: none; color: #98a2b3; font-size: 12.5px; font-weight: 600; cursor: pointer;" style-hover="height: 30px; padding: 0 10px; border: none; border-radius: 8px; background: #fef3f2; color: #b42318; font-size: 12.5px; font-weight: 600; cursor: pointer;">Delete</button>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isSettings }}">
+            <div style="max-width: 720px;">
+              <div style="font-size: 28px; font-weight: 700; letter-spacing: -0.025em;">Settings</div>
+              <div style="font-size: 14.5px; color: #667085; margin-top: 5px;">How your personal workspace is configured.</div>
+
+              <div style="margin-top: 30px;">
+                <div style="font-size: 17px; font-weight: 700; letter-spacing: -0.015em;">Account</div>
+                <div style="margin-top: 12px; background: #fff; border: 1px solid #e9ebef; border-radius: 12px; padding: 4px 16px;">
+                  <div style="display: flex; align-items: center; gap: 16px; padding: 14px 0;">
+                    <div style="min-width: 0; flex: 1;"><div style="font-size: 13.5px; font-weight: 600;">Name</div></div>
+                    <input type="text" value="Cephas Akombi" style="width: 240px; height: 34px; padding: 0 11px; border: 1px solid #e2e5ea; border-radius: 8px; outline: none; font-size: 13px;">
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 16px; padding: 14px 0; border-top: 1px solid #f3f4f7;">
+                    <div style="min-width: 0; flex: 1;"><div style="font-size: 13.5px; font-weight: 600;">Email</div></div>
+                    <input type="email" value="cephas@personalhub.app" style="width: 240px; height: 34px; padding: 0 11px; border: 1px solid #e2e5ea; border-radius: 8px; outline: none; font-size: 13px;">
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin-top: 26px;">
+                <div style="font-size: 17px; font-weight: 700; letter-spacing: -0.015em;">Security</div>
+                <div style="margin-top: 12px; background: #fff; border: 1px solid #e9ebef; border-radius: 12px; padding: 4px 16px;">
+                  <div style="display: flex; align-items: center; gap: 16px; padding: 14px 0;">
+                    <div style="min-width: 0; flex: 1;">
+                      <div style="font-size: 13.5px; font-weight: 600;">Password</div>
+                      <div style="font-size: 12.5px; color: #98a2b3; margin-top: 2px;">Last changed 4 months ago</div>
+                    </div>
+                    <button type="button" style="height: 34px; padding: 0 13px; border: 1px solid #d6dae1; border-radius: 8px; background: #fff; color: #344054; font-size: 13px; font-weight: 600; cursor: pointer;">Change password</button>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 16px; padding: 14px 0; border-top: 1px solid #f3f4f7;">
+                    <div style="min-width: 0; flex: 1;">
+                      <div style="font-size: 13.5px; font-weight: 600;">Active sessions</div>
+                      <div style="font-size: 12.5px; color: #98a2b3; margin-top: 2px;">2 devices signed in</div>
+                    </div>
+                    <button type="button" style="height: 34px; padding: 0 13px; border: 1px solid #d6dae1; border-radius: 8px; background: #fff; color: #344054; font-size: 13px; font-weight: 600; cursor: pointer;">Sign out others</button>
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin-top: 26px;">
+                <div style="font-size: 17px; font-weight: 700; letter-spacing: -0.015em;">Preferences</div>
+                <div style="margin-top: 12px; background: #fff; border: 1px solid #e9ebef; border-radius: 12px; padding: 4px 16px;">
+                  <div style="display: flex; align-items: center; gap: 16px; padding: 14px 0;">
+                    <div style="min-width: 0; flex: 1;"><div style="font-size: 13.5px; font-weight: 600;">Default deadline reminder</div></div>
+                    <select style="width: 240px; height: 34px; padding: 0 9px; border: 1px solid #e2e5ea; border-radius: 8px; background: #fff; font-size: 13px; cursor: pointer;"><option>3 days before</option><option>1 day before</option><option>7 days before</option></select>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 16px; padding: 14px 0; border-top: 1px solid #f3f4f7;">
+                    <div style="min-width: 0; flex: 1;"><div style="font-size: 13.5px; font-weight: 600;">Default view</div></div>
+                    <select style="width: 240px; height: 34px; padding: 0 9px; border: 1px solid #e2e5ea; border-radius: 8px; background: #fff; font-size: 13px; cursor: pointer;"><option>Home</option><option>Opportunities</option><option>Tasks</option></select>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 16px; padding: 14px 0; border-top: 1px solid #f3f4f7;">
+                    <div style="min-width: 0; flex: 1;"><div style="font-size: 13.5px; font-weight: 600;">Timezone</div></div>
+                    <select style="width: 240px; height: 34px; padding: 0 9px; border: 1px solid #e2e5ea; border-radius: 8px; background: #fff; font-size: 13px; cursor: pointer;"><option>GMT+3 · Nairobi</option><option>GMT+0 · London</option><option>GMT-5 · New York</option></select>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 16px; padding: 14px 0; border-top: 1px solid #f3f4f7;">
+                    <div style="min-width: 0; flex: 1;"><div style="font-size: 13.5px; font-weight: 600;">Appearance</div></div>
+                    <div style="display: flex; gap: 2px; padding: 3px; background: #f2f4f7; border-radius: 8px;">
+                      <span style="height: 28px; padding: 0 12px; display: grid; place-items: center; border-radius: 6px; font-size: 12.5px; font-weight: 600; color: #667085; cursor: pointer;">System</span>
+                      <span style="height: 28px; padding: 0 12px; display: grid; place-items: center; border-radius: 6px; font-size: 12.5px; font-weight: 700; background: #fff; color: #101828; box-shadow: 0 1px 2px rgba(16,24,40,0.06); cursor: pointer;">Light</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin-top: 26px; margin-bottom: 20px;">
+                <div style="font-size: 17px; font-weight: 700; letter-spacing: -0.015em;">Data</div>
+                <div style="margin-top: 12px; background: #fff; border: 1px solid #e9ebef; border-radius: 12px; padding: 4px 16px;">
+                  <div style="display: flex; align-items: center; gap: 16px; padding: 14px 0;">
+                    <div style="min-width: 0; flex: 1;">
+                      <div style="font-size: 13.5px; font-weight: 600;">Export data</div>
+                      <div style="font-size: 12.5px; color: #98a2b3; margin-top: 2px;">Download opportunities, tasks, and notes as JSON</div>
+                    </div>
+                    <button type="button" onClick="{{ exportData }}" style="height: 34px; padding: 0 13px; border: 1px solid #d6dae1; border-radius: 8px; background: #fff; color: #344054; font-size: 13px; font-weight: 600; cursor: pointer;">Export</button>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 16px; padding: 14px 0; border-top: 1px solid #f3f4f7;">
+                    <div style="min-width: 0; flex: 1;">
+                      <div style="font-size: 13.5px; font-weight: 600; color: #b42318;">Delete archived data</div>
+                      <div style="font-size: 12.5px; color: #98a2b3; margin-top: 2px;">Permanently removes archived opportunities and completed tasks</div>
+                    </div>
+                    <button type="button" onClick="{{ openDelete }}" style="height: 34px; padding: 0 13px; border: 1px solid #fda29b; border-radius: 8px; background: #fff; color: #b42318; font-size: 13px; font-weight: 600; cursor: pointer;" style-hover="height: 34px; padding: 0 13px; border: 1px solid #b42318; border-radius: 8px; background: #fef3f2; color: #912018; font-size: 13px; font-weight: 600; cursor: pointer;">Delete</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+        </main>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isMobileApp }}">
+    <div style="max-width: 430px; margin: 0 auto; background: #f6f7f9; min-height: 100vh; padding-bottom: 76px;">
+      <header style="position: sticky; top: 0; z-index: 10; background: #fff; border-bottom: 1px solid #ecedf1; padding: 12px 16px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 26px; height: 26px; border-radius: 8px; background: #2563eb; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 13px;">P</div>
+          <div style="font-size: 15px; font-weight: 700;">{{ mobileTitle }}</div>
+          <div style="margin-left: auto; display: flex; gap: 8px;">
+            <button type="button" onClick="{{ openCapture }}" style="height: 32px; padding: 0 12px; border: none; border-radius: 8px; background: #2563eb; color: #fff; font-size: 12.5px; font-weight: 700; cursor: pointer;">Capture</button>
+            <div style="width: 32px; height: 32px; border-radius: 50%; background: #101828; color: #fff; display: grid; place-items: center; font-size: 11.5px; font-weight: 700;">CA</div>
+          </div>
+        </div>
+        <div style="position: relative; margin-top: 10px;">
+          <input type="text" placeholder="Search" style="width: 100%; height: 36px; padding: 0 12px; border: 1px solid #e2e5ea; border-radius: 9px; background: #fafbfc; outline: none; font-size: 13px;">
+        </div>
+      </header>
+
+      <div style="padding: 18px 16px;">
+        <sc-if value="{{ isHome }}">
+          <div>
+            <div style="font-size: 21px; font-weight: 700; letter-spacing: -0.02em;">Good afternoon, {{ ownerFirst }}</div>
+            <div style="font-size: 13.5px; color: #667085; margin-top: 4px;">Here’s what needs your attention.</div>
+            <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1px; background: #e9ebef; border: 1px solid #e9ebef; border-radius: 11px; overflow: hidden; margin-top: 16px;">
+              <sc-for list="{{ summary }}" as="s" hint-placeholder-count="5">
+                <button type="button" onClick="{{ s.onClick }}" style="border: none; background: #fff; text-align: left; padding: 12px 13px;">
+                  <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 6px; height: 6px; border-radius: 50%; background: {{ s.dot }};"></span><span style="font-size: 12px; font-weight: 600; color: #475467;">{{ s.label }}</span></div>
+                  <div style="font-size: 20px; font-weight: 700; margin-top: 5px;">{{ s.value }}</div>
+                </button>
+              </sc-for>
+            </div>
+            <div style="font-size: 16px; font-weight: 700; margin: 22px 0 10px;">Needs attention</div>
+            <div style="display: grid; gap: 10px;">
+              <sc-for list="{{ attention }}" as="a" hint-placeholder-count="3">
+                <div style="background: #fff; border: 1px solid #e9ebef; border-left: 3px solid {{ a.edge }}; border-radius: 11px; padding: 13px 14px;">
+                  <div style="font-size: 14.5px; font-weight: 700;">{{ a.title }}</div>
+                  <div style="font-size: 12.5px; color: #667085; margin-top: 3px;">{{ a.org }} · {{ a.type }}</div>
+                  <div style="display: flex; align-items: center; gap: 10px; margin-top: 11px;">
+                    <span style="font-size: 12px; font-weight: 700; color: {{ a.relColor }};">{{ a.rel }}</span>
+                    <button type="button" onClick="{{ a.onAct }}" style="margin-left: auto; height: 36px; padding: 0 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: {{ a.btnBorder }}; background: {{ a.btnBg }}; color: {{ a.btnFg }};">{{ a.action }}</button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="font-size: 16px; font-weight: 700; margin: 22px 0 10px;">Upcoming deadlines</div>
+            <div style="background: #fff; border: 1px solid #e9ebef; border-radius: 11px; padding: 4px 14px;">
+              <sc-for list="{{ deadlines }}" as="d" hint-placeholder-count="5">
+                <div style="display: flex; gap: 12px; padding: 11px 0; border-top: 1px solid #f1f2f5;">
+                  <div style="width: 38px; flex: 0 0 38px; text-align: center;">
+                    <div style="font-size: 10px; font-weight: 800; color: #98a2b3;">{{ d.mon }}</div>
+                    <div style="font-size: 16px; font-weight: 700; line-height: 1.1;">{{ d.day }}</div>
+                  </div>
+                  <div style="min-width: 0; flex: 1;">
+                    <div style="font-size: 13.5px; font-weight: 600;">{{ d.title }}</div>
+                    <div style="font-size: 11.5px; font-weight: 600; margin-top: 3px; color: {{ d.relColor }};">{{ d.rel }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isOpps }}">
+          <div>
+            <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 12px;">
+              <sc-for list="{{ oppTabs }}" as="t" hint-placeholder-count="8">
+                <button type="button" onClick="{{ t.onClick }}" style="height: 32px; padding: 0 12px; border-radius: 20px; font-size: 12.5px; font-weight: 600; cursor: pointer; white-space: nowrap; border: 1px solid {{ t.chipBorder }}; background: {{ t.chipBg }}; color: {{ t.chipFg }};">{{ t.label }} {{ t.count }}</button>
+              </sc-for>
+            </div>
+            <div style="display: grid; gap: 10px;">
+              <sc-for list="{{ rows }}" as="o" hint-placeholder-count="6">
+                <div onClick="{{ o.onSelect }}" style="background: #fff; border: 1px solid #e9ebef; border-radius: 11px; padding: 13px 14px;">
+                  <div style="display: flex; align-items: flex-start; gap: 11px;">
+                    <div style="width: 32px; height: 32px; flex: 0 0 32px; border-radius: 8px; display: grid; place-items: center; font-size: 11.5px; font-weight: 800; background: {{ o.orgBg }}; color: {{ o.orgFg }};">{{ o.mono }}</div>
+                    <div style="min-width: 0; flex: 1;">
+                      <div style="font-size: 14.5px; font-weight: 700;">{{ o.title }}</div>
+                      <div style="font-size: 12.5px; color: #667085; margin-top: 2px;">{{ o.org }} · {{ o.type }}</div>
+                    </div>
+                    <span style="font-size: 11px; font-weight: 700; border-radius: 6px; padding: 3px 7px; background: {{ o.statusBg }}; color: {{ o.statusFg }};">{{ o.statusLabel }}</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px; margin-top: 12px;">
+                    <span style="font-size: 12.5px; color: #475467;">{{ o.dateLabel }}</span>
+                    <span style="font-size: 12px; font-weight: 700; color: {{ o.relColor }};">{{ o.rel }}</span>
+                    <button type="button" onClick="{{ o.onAct }}" style="margin-left: auto; height: 36px; padding: 0 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: {{ o.btnBorder }}; background: {{ o.btnBg }}; color: {{ o.btnFg }};">{{ o.action }}</button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isTasks }}">
+          <div>
+            <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 12px;">
+              <sc-for list="{{ taskTabs }}" as="t" hint-placeholder-count="5">
+                <button type="button" onClick="{{ t.onClick }}" style="height: 32px; padding: 0 12px; border-radius: 20px; font-size: 12.5px; font-weight: 600; cursor: pointer; white-space: nowrap; border: 1px solid {{ t.chipBorder }}; background: {{ t.chipBg }}; color: {{ t.chipFg }};">{{ t.label }} {{ t.count }}</button>
+              </sc-for>
+            </div>
+            <div style="background: #fff; border: 1px solid #e9ebef; border-radius: 11px; padding: 0 14px;">
+              <sc-for list="{{ taskRows }}" as="t" hint-placeholder-count="6">
+                <div style="display: flex; align-items: flex-start; gap: 11px; padding: 14px 0; border-top: 1px solid #f1f2f5;">
+                  <button type="button" onClick="{{ t.onToggle }}" style="width: 20px; height: 20px; flex: 0 0 20px; margin-top: 1px; border-radius: 6px; cursor: pointer; display: grid; place-items: center; border: 1.5px solid {{ t.boxBorder }}; background: {{ t.boxBg }};">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" style="opacity: {{ t.checkOpacity }};"><path d="m5 12.5 4.5 4.5L19 7"></path></svg>
+                  </button>
+                  <div style="min-width: 0; flex: 1;">
+                    <div style="font-size: 14px; font-weight: 600; text-decoration: {{ t.strike }}; color: {{ t.titleColor }};">{{ t.title }}</div>
+                    <div style="font-size: 12px; color: #98a2b3; margin-top: 3px;">{{ t.context }} · <span style="font-weight: 600; color: {{ t.dueColor }};">{{ t.due }}</span></div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isCal }}">
+          <div>
+            <div style="font-size: 16px; font-weight: 700; margin-bottom: 10px;">Agenda</div>
+            <div style="background: #fff; border: 1px solid #e9ebef; border-radius: 11px; padding: 0 14px;">
+              <sc-for list="{{ agenda }}" as="a" hint-placeholder-count="6">
+                <div style="display: flex; gap: 12px; padding: 13px 0; border-top: 1px solid #f1f2f5;">
+                  <div style="width: 40px; flex: 0 0 40px;">
+                    <div style="font-size: 10px; font-weight: 800; color: #98a2b3;">{{ a.mon }}</div>
+                    <div style="font-size: 17px; font-weight: 700; line-height: 1.1;">{{ a.day }}</div>
+                  </div>
+                  <div style="min-width: 0; flex: 1;">
+                    <div style="font-size: 13.5px; font-weight: 700;">{{ a.title }}</div>
+                    <div style="font-size: 12px; color: #667085; margin-top: 2px;">{{ a.org }} · {{ a.kind }}</div>
+                  </div>
+                  <span style="font-size: 11px; font-weight: 700; border-radius: 6px; padding: 3px 7px; height: 21px; background: {{ a.bg }}; color: {{ a.fg }};">{{ a.rel }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isMobileOther }}">
+          <div style="display: grid; gap: 10px;">
+            <sc-for list="{{ moreLinks }}" as="m" hint-placeholder-count="3">
+              <button type="button" onClick="{{ m.onClick }}" style="display: flex; align-items: center; justify-content: space-between; background: #fff; border: 1px solid #e9ebef; border-radius: 11px; padding: 15px 14px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left;">{{ m.label }}<span style="color: #98a2b3;">›</span></button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+
+      <nav style="position: fixed; bottom: 0; left: 0; right: 0; max-width: 430px; margin: 0 auto; background: #fff; border-top: 1px solid #ecedf1; display: grid; grid-template-columns: repeat(5, 1fr); padding: 7px 4px 10px;">
+        <sc-for list="{{ mobileNav }}" as="n" hint-placeholder-count="5">
+          <button type="button" onClick="{{ n.onClick }}" style="border: none; background: none; display: grid; justify-items: center; gap: 4px; padding: 6px 0; cursor: pointer; color: {{ n.fg }};">
+            <span style="width: 20px; height: 20px; border-radius: 6px; background: {{ n.chip }};"></span>
+            <span style="font-size: 10.5px; font-weight: 700;">{{ n.label }}</span>
+          </button>
+        </sc-for>
+      </nav>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ modalOpen }}">
+    <div onClick="{{ closeModal }}" style="position: fixed; inset: 0; background: rgba(16,24,40,0.38); z-index: 60; display: grid; place-items: start center; padding: 68px 20px 40px; overflow-y: auto; animation: phFade 0.14s ease-out;">
+      <div onClick="{{ stop }}" style="width: 100%; max-width: {{ modalWidth }}; background: #fff; border-radius: 14px; box-shadow: 0 20px 48px rgba(16,24,40,0.18);">
+        <div style="display: flex; align-items: flex-start; gap: 14px; padding: 20px 22px 0;">
+          <div style="min-width: 0; flex: 1;">
+            <div style="font-size: 17px; font-weight: 700; letter-spacing: -0.015em;">{{ modalTitle }}</div>
+            <div style="font-size: 13px; color: #667085; margin-top: 4px;">{{ modalSub }}</div>
+          </div>
+          <button type="button" onClick="{{ closeModal }}" style="width: 28px; height: 28px; border: none; background: none; color: #98a2b3; font-size: 18px; line-height: 1; cursor: pointer; border-radius: 7px;" style-hover="width: 28px; height: 28px; border: none; background: #f2f4f7; color: #344054; font-size: 18px; line-height: 1; cursor: pointer; border-radius: 7px;">×</button>
+        </div>
+
+        <sc-if value="{{ modalAddOpp }}">
+          <div style="padding: 18px 22px 0;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+              <label style="display: grid; gap: 6px; grid-column: span 2;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Title</span><input type="text" placeholder="e.g. AI Residency Program" style="height: 38px; padding: 0 11px; border: 1px solid #d6dae1; border-radius: 8px; outline: none; font-size: 13.5px;"></label>
+              <label style="display: grid; gap: 6px;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Organization</span><input type="text" placeholder="e.g. Northline HAI" style="height: 38px; padding: 0 11px; border: 1px solid #d6dae1; border-radius: 8px; outline: none; font-size: 13.5px;"></label>
+              <label style="display: grid; gap: 6px;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Type</span><select style="height: 38px; padding: 0 9px; border: 1px solid #d6dae1; border-radius: 8px; background: #fff; font-size: 13.5px; cursor: pointer;"><option>Internship</option><option>Fellowship</option><option>Grant</option><option>Residency</option><option>Hackathon</option><option>Conference</option><option>Program</option></select></label>
+              <label style="display: grid; gap: 6px; grid-column: span 2;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Application URL</span><input type="text" placeholder="https://" style="height: 38px; padding: 0 11px; border: 1px solid #d6dae1; border-radius: 8px; outline: none; font-size: 13.5px;"></label>
+              <label style="display: grid; gap: 6px;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Deadline</span><input type="date" style="height: 38px; padding: 0 11px; border: 1px solid #d6dae1; border-radius: 8px; outline: none; font-size: 13.5px;"></label>
+              <label style="display: grid; gap: 6px;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Priority</span><select style="height: 38px; padding: 0 9px; border: 1px solid #d6dae1; border-radius: 8px; background: #fff; font-size: 13.5px; cursor: pointer;"><option>Medium</option><option>High</option><option>Low</option></select></label>
+              <label style="display: grid; gap: 6px;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Status</span><select style="height: 38px; padding: 0 9px; border: 1px solid #d6dae1; border-radius: 8px; background: #fff; font-size: 13.5px; cursor: pointer;"><option>Need to apply</option><option>Saved</option><option>In progress</option><option>Applied</option><option>Waiting</option></select></label>
+              <label style="display: grid; gap: 6px;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Location</span><input type="text" placeholder="Remote / city" style="height: 38px; padding: 0 11px; border: 1px solid #d6dae1; border-radius: 8px; outline: none; font-size: 13.5px;"></label>
+              <label style="display: grid; gap: 6px; grid-column: span 2;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Description</span><textarea placeholder="What is this opportunity?" style="min-height: 72px; padding: 9px 11px; border: 1px solid #d6dae1; border-radius: 8px; outline: none; font-size: 13.5px; resize: vertical;"></textarea></label>
+            </div>
+            <button type="button" onClick="{{ toggleAdvanced }}" style="margin-top: 14px; border: none; background: none; padding: 0; font-size: 13px; font-weight: 600; color: #2563eb; cursor: pointer;">{{ advancedLabel }}</button>
+            <sc-if value="{{ advancedOpen }}">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px;">
+                <label style="display: grid; gap: 6px;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Source URL</span><input type="text" placeholder="https://" style="height: 38px; padding: 0 11px; border: 1px solid #d6dae1; border-radius: 8px; outline: none; font-size: 13.5px;"></label>
+                <label style="display: grid; gap: 6px;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Follow-up date</span><input type="date" style="height: 38px; padding: 0 11px; border: 1px solid #d6dae1; border-radius: 8px; outline: none; font-size: 13.5px;"></label>
+                <label style="display: grid; gap: 6px;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Eligibility</span><input type="text" placeholder="Who can apply" style="height: 38px; padding: 0 11px; border: 1px solid #d6dae1; border-radius: 8px; outline: none; font-size: 13.5px;"></label>
+                <label style="display: grid; gap: 6px;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Funding</span><input type="text" placeholder="e.g. $25,000" style="height: 38px; padding: 0 11px; border: 1px solid #d6dae1; border-radius: 8px; outline: none; font-size: 13.5px;"></label>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ modalCapture }}">
+          <div style="padding: 18px 22px 0; display: grid; gap: 14px;">
+            <label style="display: grid; gap: 6px;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Title</span><input type="text" placeholder="What did you find?" style="height: 38px; padding: 0 11px; border: 1px solid #d6dae1; border-radius: 8px; outline: none; font-size: 13.5px;"></label>
+            <label style="display: grid; gap: 6px;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">URL</span><input type="text" placeholder="https://" style="height: 38px; padding: 0 11px; border: 1px solid #d6dae1; border-radius: 8px; outline: none; font-size: 13.5px;"></label>
+            <label style="display: grid; gap: 6px;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Note <span style="color: #98a2b3; font-weight: 500;">optional</span></span><textarea placeholder="Anything to remember" style="min-height: 68px; padding: 9px 11px; border: 1px solid #d6dae1; border-radius: 8px; outline: none; font-size: 13.5px; resize: vertical;"></textarea></label>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ modalTask }}">
+          <div style="padding: 18px 22px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <label style="display: grid; gap: 6px; grid-column: span 2;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Task</span><input type="text" placeholder="e.g. Draft fellowship essay" style="height: 38px; padding: 0 11px; border: 1px solid #d6dae1; border-radius: 8px; outline: none; font-size: 13.5px;"></label>
+            <label style="display: grid; gap: 6px;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Task type</span><select style="height: 38px; padding: 0 9px; border: 1px solid #d6dae1; border-radius: 8px; background: #fff; font-size: 13.5px; cursor: pointer;"><option>Apply</option><option>Download</option><option>Review</option><option>Contact</option><option>Attend</option><option>Complete</option><option>Other</option></select></label>
+            <label style="display: grid; gap: 6px;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Related opportunity</span><select style="height: 38px; padding: 0 9px; border: 1px solid #d6dae1; border-radius: 8px; background: #fff; font-size: 13.5px; cursor: pointer;"><option>None (personal)</option><option>AI Residency Program</option><option>Global Engineering Internship</option><option>Seed Grant Program</option></select></label>
+            <label style="display: grid; gap: 6px;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Due date</span><input type="date" style="height: 38px; padding: 0 11px; border: 1px solid #d6dae1; border-radius: 8px; outline: none; font-size: 13.5px;"></label>
+            <label style="display: grid; gap: 6px;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Priority</span><select style="height: 38px; padding: 0 9px; border: 1px solid #d6dae1; border-radius: 8px; background: #fff; font-size: 13.5px; cursor: pointer;"><option>Medium</option><option>High</option><option>Low</option></select></label>
+            <label style="display: grid; gap: 6px; grid-column: span 2;"><span style="font-size: 12.5px; font-weight: 600; color: #344054;">Action URL <span style="color: #98a2b3; font-weight: 500;">optional</span></span><input type="text" placeholder="https://" style="height: 38px; padding: 0 11px; border: 1px solid #d6dae1; border-radius: 8px; outline: none; font-size: 13.5px;"></label>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ modalApplied }}">
+          <div style="padding: 18px 22px 0;">
+            <div style="background: #f6fef9; border: 1px solid #d1fadf; border-radius: 10px; padding: 13px 14px; font-size: 13px; color: #05603a;">Status becomes <strong>Applied</strong> and today’s date is recorded as the applied date.</div>
+            <div style="font-size: 12.5px; font-weight: 600; color: #344054; margin: 18px 0 8px;">Add a follow-up reminder?</div>
+            <div style="display: flex; gap: 7px; flex-wrap: wrap;">
+              <sc-for list="{{ followOptions }}" as="f" hint-placeholder-count="5">
+                <button type="button" onClick="{{ f.onClick }}" style="height: 34px; padding: 0 13px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid {{ f.border }}; background: {{ f.bg }}; color: {{ f.fg }};">{{ f.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ modalDelete }}">
+          <div style="padding: 18px 22px 0;">
+            <div style="background: #fffbfa; border: 1px solid #fee4e2; border-radius: 10px; padding: 13px 14px; font-size: 13px; color: #912018;">This permanently deletes 6 archived opportunities and 24 completed tasks. This cannot be undone.</div>
+          </div>
+        </sc-if>
+
+        <div style="display: flex; justify-content: flex-end; gap: 9px; padding: 20px 22px;">
+          <button type="button" onClick="{{ closeModal }}" style="height: 38px; padding: 0 15px; border: 1px solid #d6dae1; border-radius: 9px; background: #fff; color: #344054; font-size: 13.5px; font-weight: 600; cursor: pointer;" style-hover="height: 38px; padding: 0 15px; border: 1px solid #b8c0cc; border-radius: 9px; background: #fafbfc; color: #101828; font-size: 13.5px; font-weight: 600; cursor: pointer;">Cancel</button>
+          <button type="button" onClick="{{ confirmModal }}" style="height: 38px; padding: 0 17px; border: none; border-radius: 9px; font-size: 13.5px; font-weight: 600; cursor: pointer; background: {{ modalCtaBg }}; color: #fff;">{{ modalCta }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ toastOpen }}">
+    <div style="position: fixed; bottom: 26px; right: 26px; z-index: 80; display: flex; align-items: center; gap: 11px; background: #101828; color: #fff; border-radius: 10px; padding: 12px 16px; box-shadow: 0 12px 28px rgba(16,24,40,0.28); animation: phToast 0.2s ease-out;">
+      <span style="width: 18px; height: 18px; border-radius: 50%; background: #12b76a; display: grid; place-items: center;">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7"></path></svg>
+      </span>
+      <span style="font-size: 13.5px; font-weight: 600;">{{ toast }}</span>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;ownerName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Cephas&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;forceMobile&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;showPipeline&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Layout&quot;}}">
+class Component extends DCLogic {
+  state = {
+    page: 'login', tab: 'all', q: '', selected: 4, detailTab: 'details',
+    taskView: 'today', inboxFilter: 'All', calView: 'month', archTab: 'Opportunities',
+    modal: null, toast: null, loading: false, done: {}, advancedOpen: false,
+    follow: '14 days', w: 1440, mobilePage: null
+  };
+
+  ORGS = {
+    'Northline HAI': ['#eef2ff', '#4338ca', 'NH'],
+    'Vertex Labs': ['#ecfdf5', '#047857', 'VL'],
+    'Aurora Institute': ['#f5f3ff', '#6d28d9', 'AI'],
+    'Acme Foundation': ['#eff6ff', '#1d4ed8', 'AF'],
+    'Ridgeway Labs': ['#fff7ed', '#c2410c', 'RL'],
+    'Halcyon Ventures': ['#fdf2f8', '#be185d', 'HV'],
+    'Northgate Collective': ['#f0f9ff', '#0369a1', 'NC'],
+    'Fernpost': ['#f7fee7', '#4d7c0f', 'FP'],
+    'Cadence Media': ['#fef2f2', '#b91c1c', 'CM'],
+    'Meridian': ['#f1f5f9', '#334155', 'MD'],
+    'Blue Harbor': ['#eff6ff', '#1e40af', 'BH'],
+    'Solstice Fund': ['#fffbeb', '#b45309', 'SF'],
+    'Tallow & Co': ['#faf5ff', '#7e22ce', 'TC'],
+    'Kettle University': ['#f0fdfa', '#0f766e', 'KU']
+  };
+
+  OPPS = [
+    { id: 1, title: 'AI Residency Program', org: 'Northline HAI', type: 'Residency', d: 1, date: 'Aug 23', status: 'need_to_apply', pri: 'High', note: 'Essay required', src: 'Northline careers', loc: 'Palo Alto, CA', elig: 'Final-year students', fund: '$8,500 / mo' },
+    { id: 2, title: 'Global Engineering Internship', org: 'Vertex Labs', type: 'Internship', d: 3, date: 'Aug 25', status: 'in_progress', pri: 'Medium', note: 'Assessment pending', src: 'Careers site', loc: 'Remote (EMEA)', elig: 'Undergraduate', fund: 'Paid' },
+    { id: 3, title: 'ML in Health Fellowship', org: 'Aurora Institute', type: 'Fellowship', d: 7, date: 'Aug 29', status: 'in_progress', pri: 'High', note: 'Essay in review', src: 'Newsletter', loc: 'Montreal, QC', elig: 'Open', fund: '$20,000' },
+    { id: 4, title: 'Seed Grant Program', org: 'Acme Foundation', type: 'Grant', d: 10, date: 'Sep 1', status: 'need_to_apply', pri: 'Medium', note: 'Short proposal', src: 'Foundation website', loc: 'Global', elig: 'Early-stage founders', fund: '$25,000' },
+    { id: 5, title: 'Founder Catalyst Program', org: 'Ridgeway Labs', type: 'Founder Program', d: 13, date: 'Sep 4', status: 'waiting', pri: 'Medium', note: 'Video intro submitted', src: 'Referral', loc: 'Remote', elig: 'Pre-seed teams', fund: 'Equity-free' },
+    { id: 6, title: 'Startup School Fellowship', org: 'Halcyon Ventures', type: 'Fellowship', d: 16, date: 'Sep 7', status: 'need_to_apply', pri: 'High', note: '2 essays', src: 'Twitter', loc: 'Remote', elig: 'Student founders', fund: '$15,000' },
+    { id: 7, title: 'Hack the North 2026', org: 'Northgate Collective', type: 'Hackathon', d: 18, date: 'Sep 9', status: 'need_to_apply', pri: 'Low', note: 'Team registration open', src: 'Event site', loc: 'Waterloo, ON', elig: 'Any student', fund: 'Travel covered' },
+    { id: 8, title: 'Campus Leader Program', org: 'Fernpost', type: 'Leadership', d: 26, date: 'Sep 17', status: 'in_progress', pri: 'Low', note: 'Short application', src: 'Community post', loc: 'Remote', elig: 'Campus organizers', fund: 'Stipend' },
+    { id: 9, title: 'Startup Grants Program', org: 'Cadence Media', type: 'Grant', d: 31, date: 'Sep 22', status: 'need_to_apply', pri: 'High', note: 'Pitch deck + traction', src: 'Newsletter', loc: 'Global', elig: 'Founders', fund: '$50,000' },
+    { id: 10, title: 'Product Fellowship', org: 'Meridian', type: 'Fellowship', d: null, date: 'Rolling', status: 'applied', pri: '—', note: 'Rolling application', src: 'Careers site', loc: 'Remote', elig: 'Open', fund: 'Paid' },
+    { id: 11, title: 'Data Science Internship', org: 'Blue Harbor', type: 'Internship', d: 21, date: 'Sep 12', status: 'applied', pri: 'Medium', note: 'Submitted Aug 12', src: 'Careers site', loc: 'Nairobi, KE', elig: 'Undergraduate', fund: 'Paid' },
+    { id: 12, title: 'Climate Innovation Prize', org: 'Solstice Fund', type: 'Grant', d: 51, date: 'Oct 12', status: 'need_to_apply', pri: 'Low', note: 'Concept note', src: 'Newsletter', loc: 'Global', elig: 'Climate ventures', fund: '$40,000' },
+    { id: 13, title: 'Design Systems Residency', org: 'Tallow & Co', type: 'Residency', d: -4, date: 'Aug 18', status: 'need_to_apply', pri: 'Medium', note: 'Portfolio required', src: 'Studio site', loc: 'Remote', elig: 'Designers', fund: '£6,000' },
+    { id: 14, title: 'Research Assistantship', org: 'Kettle University', type: 'Program', d: 39, date: 'Sep 30', status: 'interview', pri: 'High', note: 'Interview scheduled', src: 'Faculty email', loc: 'Cambridge, UK', elig: 'Graduates', fund: 'Funded' },
+    { id: 15, title: 'Open Source Grant', org: 'Meridian', type: 'Grant', d: null, date: 'Jul 30', status: 'accepted', pri: '—', note: 'Accepted Aug 2', src: 'Program site', loc: 'Remote', elig: 'Maintainers', fund: '$10,000' },
+    { id: 16, title: 'Summer Analyst Program', org: 'Blue Harbor', type: 'Internship', d: null, date: 'Aug 10', status: 'rejected', pri: '—', note: 'Closed', src: 'Careers site', loc: 'London, UK', elig: 'Undergraduate', fund: 'Paid' }
+  ];
+
+  TASKS = [
+    { id: 't1', title: 'Customize resume for Vertex internship', ctx: 'Global Engineering Internship', due: 'Today', off: 0, type: 'Review', action: 'Open opportunity' },
+    { id: 't2', title: 'Complete coding assessment', ctx: 'Global Engineering Internship', due: 'Today', off: 0, type: 'Apply', action: 'Open assessment' },
+    { id: 't3', title: 'Email program coordinator', ctx: 'Founder Catalyst Program', due: 'Aug 20', off: -2, type: 'Contact', action: 'Mark complete' },
+    { id: 't4', title: 'Draft fellowship essay', ctx: 'ML in Health Fellowship', due: 'Tomorrow', off: 1, type: 'Complete', action: 'Open opportunity' },
+    { id: 't5', title: 'Download application guide', ctx: 'Seed Grant Program', due: 'Aug 25', off: 3, type: 'Download', action: 'Download' },
+    { id: 't6', title: 'Prepare questions for mentor call', ctx: 'Personal', due: 'Aug 26', off: 4, type: 'Contact', action: 'Mark complete' },
+    { id: 't7', title: 'Update portfolio case study', ctx: 'Personal', due: 'Aug 28', off: 6, type: 'Complete', action: 'Mark complete' },
+    { id: 't8', title: 'Submit application', ctx: 'Seed Grant Program', due: 'Sep 1', off: 10, type: 'Apply', action: 'Apply' },
+    { id: 't9', title: 'Update resume', ctx: 'Seed Grant Program', due: 'Aug 19', off: -3, type: 'Review', action: 'Open opportunity', done: true },
+    { id: 't10', title: 'Register for hackathon team', ctx: 'Hack the North 2026', due: 'Aug 17', off: -5, type: 'Apply', action: 'Open opportunity', done: true }
+  ];
+
+  INBOX = [
+    { id: 'i1', title: 'Applied ML fellowship — cohort 4', source: 'aurora.institute/fellowship', ago: '2h ago', kind: 'Opportunity', desc: 'Six-month fellowship with a research stipend; applications close in September.' },
+    { id: 'i2', title: '10 startup grants for early founders', source: 'cadencemedia.com/grants', ago: '5h ago', kind: 'Note', desc: 'Curated list — worth splitting into individual opportunities.' },
+    { id: 'i3', title: 'Design residency applications open', source: 'tallowco.com/residency', ago: '1d ago', kind: 'Opportunity', desc: 'Remote residency for product designers, portfolio required.' },
+    { id: 'i4', title: 'Ask Priya about the referral', source: 'No link', ago: '1d ago', kind: 'Task', desc: 'She offered to refer me for the Vertex internship.' },
+    { id: 'i5', title: 'Conference CFP closes in September', source: 'collide.events/cfp', ago: '2d ago', kind: 'Opportunity', desc: 'Speaker submissions for the autumn track.' }
+  ];
+
+  ACTIVITY = [
+    { title: 'Opportunity saved', desc: 'Saved from the foundation website.', when: 'Aug 14 · 10:14', dot: '#98a2b3' },
+    { title: 'Notes updated', desc: 'Added notes about the proposal angle.', when: 'Aug 16 · 15:42', dot: '#6941c6' },
+    { title: 'Application opened', desc: 'You opened the application link.', when: 'Aug 18 · 09:18', dot: '#2563eb' },
+    { title: 'Task completed', desc: 'Update resume marked complete.', when: 'Aug 19 · 18:03', dot: '#12b76a' },
+    { title: 'Follow-up created', desc: 'Reminder set for Sep 5, 2026.', when: 'Aug 20 · 09:20', dot: '#f79009' }
+  ];
+
+  ARCHIVE_OPPS = [
+    { id: 'a1', title: 'Summer Analyst Program', meta: 'Blue Harbor · archived Aug 12', state: 'Rejected', mono: 'BH' },
+    { id: 'a2', title: 'Winter Research Grant', meta: 'Solstice Fund · archived Jul 30', state: 'Closed', mono: 'SF' },
+    { id: 'a3', title: 'Product Sprint Challenge', meta: 'Meridian · archived Jul 22', state: 'Completed', mono: 'MD' },
+    { id: 'a4', title: 'Open Source Grant', meta: 'Meridian · archived Jul 18', state: 'Accepted', mono: 'MD' },
+    { id: 'a5', title: 'Spring Hackathon', meta: 'Northgate Collective · archived Jun 09', state: 'Completed', mono: 'NC' }
+  ];
+
+  STATUS = {
+    saved: ['Saved', '#f2f4f7', '#475467'],
+    need_to_apply: ['Need to apply', '#eff4ff', '#175cd3'],
+    in_progress: ['In progress', '#f4f3ff', '#6941c6'],
+    applied: ['Applied', '#ecfdf3', '#067647'],
+    waiting: ['Waiting', '#fffaeb', '#b54708'],
+    interview: ['Interview', '#f0f9ff', '#026aa2'],
+    accepted: ['Accepted', '#ecfdf3', '#067647'],
+    rejected: ['Rejected', '#f4f5f7', '#667085'],
+    archived: ['Archived', '#f2f4f7', '#475467']
+  };
+
+  componentDidMount() {
+    this._r = () => this.setState({ w: window.innerWidth });
+    window.addEventListener('resize', this._r);
+    this._r();
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._r);
+    if (this._t) clearTimeout(this._t);
+  }
+
+  toast(msg) {
+    this.setState({ toast: msg });
+    if (this._t) clearTimeout(this._t);
+    this._t = setTimeout(() => this.setState({ toast: null }), 2600);
+  }
+
+  nav(page) {
+    const s = { page: page, modal: null };
+    if (page === 'opps') {
+      s.loading = true;
+      setTimeout(() => this.setState({ loading: false }), 420);
+    }
+    this.setState(s);
+  }
+
+  rel(d) {
+    if (d === null || d === undefined) return ['No deadline', '#98a2b3', '#f4f5f7'];
+    if (d < 0) return ['Overdue by ' + Math.abs(d) + 'd', '#b42318', '#fef3f2'];
+    if (d === 0) return ['Due today', '#b42318', '#fef3f2'];
+    if (d === 1) return ['Due tomorrow', '#b42318', '#fef3f2'];
+    if (d <= 7) return ['Due in ' + d + ' days', '#b54708', '#fffaeb'];
+    return ['Due in ' + d + ' days', '#667085', '#f4f5f7'];
+  }
+
+  pri(p) {
+    if (p === 'High') return ['#b42318', '#fef3f2'];
+    if (p === 'Medium') return ['#b54708', '#fffaeb'];
+    if (p === 'Low') return ['#175cd3', '#eff8ff'];
+    return ['#98a2b3', '#f4f5f7'];
+  }
+
+  actionFor(o) {
+    if (o.status === 'need_to_apply') return ['Apply', 'primary'];
+    if (o.status === 'in_progress') return ['Continue', 'secondary'];
+    if (o.status === 'waiting' || o.status === 'interview') return ['View', 'secondary'];
+    return ['View', 'secondary'];
+  }
+
+  decorate(o) {
+    const org = this.ORGS[o.org] || ['#f2f4f7', '#475467', '??'];
+    const st = this.STATUS[o.status];
+    const r = this.rel(o.d);
+    const p = this.pri(o.pri);
+    const a = this.actionFor(o);
+    const primary = a[1] === 'primary';
+    return Object.assign({}, o, {
+      orgBg: org[0], orgFg: org[1], mono: org[2],
+      statusLabel: st[0], statusBg: st[1], statusFg: st[2],
+      rel: r[0], relColor: r[1], relBg: r[2],
+      priColor: p[0], priBg: p[1],
+      dateLabel: o.date,
+      action: a[0],
+      btnBg: primary ? '#2563eb' : '#ffffff',
+      btnFg: primary ? '#ffffff' : '#344054',
+      btnBorder: primary ? 'none' : '1px solid #d6dae1',
+      onSelect: () => this.setState({ selected: o.id, detailTab: 'details' }),
+      onAct: (e) => {
+        if (e && e.stopPropagation) e.stopPropagation();
+        if (a[0] === 'Apply') this.toast('Opening application for ' + o.title);
+        else this.setState({ page: 'detail', selected: o.id });
+      }
+    });
+  }
+
+  checklistFor(id) {
+    const base = [
+      { k: 'resume', title: 'Update resume', due: 'Aug 19', pre: true },
+      { k: 'transcript', title: 'Request transcript', due: 'Aug 21', pre: true },
+      { k: 'guide', title: 'Download application guide', due: 'Aug 25', action: 'Download' },
+      { k: 'essay', title: 'Draft project summary', due: 'Aug 27' },
+      { k: 'portfolio', title: 'Prepare portfolio / materials', due: 'Aug 29' },
+      { k: 'submit', title: 'Submit application', due: 'Sep 1', action: 'Apply' }
+    ];
+    return base.map((b) => {
+      const key = id + ':' + b.k;
+      const done = this.state.done[key] === undefined ? !!b.pre : this.state.done[key];
+      return {
+        title: b.title, due: b.due,
+        hasAction: !!b.action && !done, actionLabel: b.action || '',
+        onAction: () => this.toast(b.action === 'Download' ? 'Guide downloaded.' : 'Opening application.'),
+        boxBg: done ? '#12b76a' : '#ffffff',
+        boxBorder: done ? '#12b76a' : '#cfd4dc',
+        checkOpacity: done ? 1 : 0,
+        color: done ? '#98a2b3' : '#344054',
+        strike: done ? 'line-through' : 'none',
+        _done: done,
+        onToggle: () => this.setState((s) => ({ done: Object.assign({}, s.done, { [key]: !done }) }))
+      };
+    });
+  }
+
+  renderVals() {
+    const S = this.state;
+    const mobile = (this.props.forceMobile === true) || S.w < 860;
+    const isApp = S.page !== 'login';
+    const all = this.OPPS.map((o) => this.decorate(o));
+    const byId = {};
+    all.forEach((o) => { byId[o.id] = o; });
+    const sel = byId[S.selected] || all[0];
+    const count = (st) => this.OPPS.filter((o) => o.status === st).length;
+
+    const navBg = (p) => (S.page === p || (p === 'opps' && S.page === 'detail')) ? '#f3f6fd' : 'transparent';
+    const navFg = (p) => (S.page === p || (p === 'opps' && S.page === 'detail')) ? '#1d4ed8' : '#475467';
+
+    const summaryDefs = [
+      ['Need to apply', count('need_to_apply'), '3 due soon', '#b54708', '#2563eb', 'need_to_apply'],
+      ['In progress', count('in_progress'), '2 need action', '#b54708', '#6941c6', 'in_progress'],
+      ['Applied', count('applied'), 'Awaiting review', '#98a2b3', '#12b76a', 'applied'],
+      ['Waiting', count('waiting') + count('interview'), 'Updates pending', '#98a2b3', '#f79009', 'waiting'],
+      ['Upcoming this week', this.OPPS.filter((o) => o.d !== null && o.d <= 7).length, 'Deadlines', '#98a2b3', '#98a2b3', 'all']
+    ];
+
+    const attentionIds = [13, 1, 2, 4];
+    const reasons = { 13: 'Deadline passed', 1: 'Not started', 2: 'Assessment pending', 4: 'Proposal not drafted' };
+    const attention = attentionIds.map((id) => Object.assign({}, byId[id], {
+      reason: reasons[id],
+      edge: byId[id].d !== null && byId[id].d <= 1 ? '#d92d20' : '#f79009'
+    }));
+
+    const dl = all.filter((o) => o.d !== null && o.d >= 0).sort((a, b) => a.d - b.d).slice(0, 5)
+      .map((o) => Object.assign({}, o, { mon: o.date.split(' ')[0].toUpperCase(), day: o.date.split(' ')[1] }));
+
+    const tabs = [
+      ['all', 'All', this.OPPS.length], ['need_to_apply', 'Need to apply', count('need_to_apply')],
+      ['in_progress', 'In progress', count('in_progress')], ['applied', 'Applied', count('applied')],
+      ['waiting', 'Waiting', count('waiting')], ['interview', 'Interview', count('interview')],
+      ['accepted', 'Accepted', count('accepted')], ['rejected', 'Rejected', count('rejected')],
+      ['archived', 'Archived', this.ARCHIVE_OPPS.length]
+    ];
+
+    const q = S.q.trim().toLowerCase();
+    let rows = all.filter((o) => S.tab === 'all' || o.status === S.tab);
+    if (q) rows = rows.filter((o) => (o.title + ' ' + o.org + ' ' + o.type).toLowerCase().indexOf(q) >= 0);
+    if (S.tab === 'archived') rows = [];
+
+    const tv = S.taskView;
+    const taskDone = (t) => S.done[t.id] === undefined ? !!t.done : S.done[t.id];
+    const inView = (t) => {
+      const d = taskDone(t);
+      if (tv === 'today') return !d && t.off <= 0;
+      if (tv === 'upcoming') return !d && t.off > 0;
+      if (tv === 'overdue') return !d && t.off < 0;
+      if (tv === 'completed') return d;
+      return true;
+    };
+    const decorateTask = (t) => {
+      const d = taskDone(t);
+      const r = this.rel(t.off);
+      return {
+        title: t.title, context: t.ctx, type: t.type, due: t.due,
+        dueColor: d ? '#98a2b3' : r[1],
+        boxBg: d ? '#12b76a' : '#ffffff', boxBorder: d ? '#12b76a' : '#cfd4dc',
+        checkOpacity: d ? 1 : 0, strike: d ? 'line-through' : 'none',
+        titleColor: d ? '#98a2b3' : '#101828',
+        actionLabel: t.action,
+        onAction: () => this.toast(t.action + ' · ' + t.title),
+        onToggle: () => {
+          this.setState((s) => ({ done: Object.assign({}, s.done, { [t.id]: !d }) }));
+          if (!d) this.toast('Task completed.');
+        }
+      };
+    };
+    const taskRows = this.TASKS.filter(inView).map(decorateTask);
+    const taskCount = (v) => this.TASKS.filter((t) => {
+      const d = taskDone(t);
+      if (v === 'today') return !d && t.off <= 0;
+      if (v === 'upcoming') return !d && t.off > 0;
+      if (v === 'overdue') return !d && t.off < 0;
+      if (v === 'completed') return d;
+      return true;
+    }).length;
+
+    const inboxKinds = { Opportunity: ['#eff4ff', '#175cd3'], Task: ['#f4f3ff', '#6941c6'], Note: ['#f2f4f7', '#475467'] };
+    const inboxItems = this.INBOX
+      .filter((i) => S.inboxFilter === 'All' || S.inboxFilter === 'Unprocessed' || i.kind + 's' === S.inboxFilter)
+      .map((i) => ({
+        title: i.title, source: i.source, ago: i.ago, kind: i.kind, desc: i.desc,
+        mono: i.title.slice(0, 2).toUpperCase(),
+        kindBg: inboxKinds[i.kind][0], kindFg: inboxKinds[i.kind][1],
+        convertLabel: i.kind === 'Task' ? 'Convert to task' : 'Convert to opportunity',
+        onConvert: () => this.toast(i.kind === 'Task' ? 'Converted to task.' : 'Converted to opportunity.'),
+        onArchive: () => this.toast('Moved to archive.')
+      }));
+
+    // calendar
+    const events = {};
+    all.forEach((o) => {
+      if (o.d === null) return;
+      const parts = o.date.split(' ');
+      if (parts[0] !== 'Aug') return;
+      const day = parseInt(parts[1], 10);
+      const st = this.STATUS[o.status];
+      (events[day] = events[day] || []).push({ title: o.title, bg: st[1], fg: st[2], dot: st[2] });
+    });
+    [[24, 'Follow-up: Vertex recruiter', '#fffaeb', '#b54708'], [27, 'Mentor call', '#f4f3ff', '#6941c6']].forEach((e) => {
+      (events[e[0]] = events[e[0]] || []).push({ title: e[1], bg: e[2], fg: e[3], dot: e[3] });
+    });
+    const calCells = [];
+    for (let i = 26; i <= 31; i++) calCells.push({ day: i, muted: true });
+    for (let i = 1; i <= 31; i++) calCells.push({ day: i, muted: false, today: i === 22 });
+    for (let i = 1; i <= 5; i++) calCells.push({ day: i, muted: true });
+    const cells = calCells.map((c) => ({
+      day: c.day,
+      bg: c.muted ? '#fcfcfd' : '#ffffff',
+      numColor: c.today ? '#ffffff' : (c.muted ? '#cfd4dc' : '#344054'),
+      numBg: c.today ? '#2563eb' : 'transparent',
+      events: c.muted ? [] : (events[c.day] || [])
+    }));
+
+    const agenda = all.filter((o) => o.d !== null && o.d >= 0).sort((a, b) => a.d - b.d).map((o) => ({
+      mon: o.date.split(' ')[0].toUpperCase(), day: o.date.split(' ')[1],
+      title: o.title, org: o.org, kind: o.type + ' deadline',
+      rel: o.rel, bg: o.relBg, fg: o.relColor
+    }));
+
+    const modalMeta = {
+      addOpp: ['Add opportunity', 'Save something you want to track and apply to.', '640px', 'Save opportunity', '#2563eb'],
+      capture: ['Quick capture', 'Save it now, organize it later.', '440px', 'Save to inbox', '#2563eb'],
+      task: ['Add task', 'Attach it to an opportunity or keep it personal.', '560px', 'Add task', '#2563eb'],
+      applied: ['Mark as applied', sel.title + ' · ' + sel.org, '460px', 'Confirm', '#2563eb'],
+      del: ['Delete archived data', 'This action is permanent.', '460px', 'Delete permanently', '#b42318']
+    };
+    const mm = modalMeta[S.modal] || ['', '', '460px', 'Confirm', '#2563eb'];
+
+    const chip = (on) => on
+      ? { chipBg: '#eff4ff', chipFg: '#1d4ed8', chipBorder: '#c6d5f7' }
+      : { chipBg: '#ffffff', chipFg: '#475467', chipBorder: '#e2e5ea' };
+
+    const mobilePage = S.page === 'detail' ? 'opps' : S.page;
+
+    return {
+      ownerFirst: this.props.ownerName || 'Cephas',
+      isLogin: !isApp,
+      isDesktopApp: isApp && !mobile,
+      isMobileApp: isApp && mobile,
+      isHome: S.page === 'home', isInbox: S.page === 'inbox', isOpps: S.page === 'opps',
+      isDetail: S.page === 'detail', isTasks: S.page === 'tasks', isCal: S.page === 'calendar',
+      isArchive: S.page === 'archive', isSettings: S.page === 'settings',
+      isMobileOther: mobile && (S.page === 'inbox' || S.page === 'archive' || S.page === 'settings'),
+      mobileTitle: { home: 'Personal Hub', inbox: 'Inbox', opps: 'Opportunities', detail: 'Opportunities', tasks: 'Tasks', calendar: 'Calendar', archive: 'Archive', settings: 'Settings' }[S.page],
+      moreLinks: [
+        { label: 'Inbox', onClick: () => this.nav('inbox') },
+        { label: 'Archive', onClick: () => this.nav('archive') },
+        { label: 'Settings', onClick: () => this.nav('settings') }
+      ],
+      mobileNav: [
+        ['Home', 'home'], ['Opps', 'opps'], ['Tasks', 'tasks'], ['Calendar', 'calendar'], ['More', 'inbox']
+      ].map((n) => ({
+        label: n[0],
+        fg: mobilePage === n[1] ? '#1d4ed8' : '#98a2b3',
+        chip: mobilePage === n[1] ? '#2563eb' : '#d0d5dd',
+        onClick: () => this.nav(n[1])
+      })),
+
+      signIn: () => this.nav('home'),
+      goHome: () => this.nav('home'), goInbox: () => this.nav('inbox'),
+      goOpps: () => this.nav('opps'), goTasks: () => this.nav('tasks'),
+      goCal: () => this.nav('calendar'), goArchive: () => this.nav('archive'),
+      goSettings: () => this.nav('settings'), goDetail: () => this.nav('detail'),
+
+      navHomeBg: navBg('home'), navHomeFg: navFg('home'),
+      navInboxBg: navBg('inbox'), navInboxFg: navFg('inbox'),
+      navOppsBg: navBg('opps'), navOppsFg: navFg('opps'),
+      navTasksBg: navBg('tasks'), navTasksFg: navFg('tasks'),
+      navCalBg: navBg('calendar'), navCalFg: navFg('calendar'),
+      navArchBg: navBg('archive'), navArchFg: navFg('archive'),
+      navSetBg: navBg('settings'), navSetFg: navFg('settings'),
+
+      summary: summaryDefs.map((s) => ({
+        label: s[0], value: s[1], meta: s[2], metaColor: s[3], dot: s[4],
+        onClick: () => { this.setState({ tab: s[5] }); this.nav('opps'); }
+      })),
+      attention: attention, attentionCount: attention.length, noAttention: attention.length === 0,
+      deadlines: dl,
+      showPipeline: this.props.showPipeline !== false,
+      pipeline: [
+        ['Need to apply', count('need_to_apply'), '#2563eb'], ['In progress', count('in_progress'), '#6941c6'],
+        ['Applied', count('applied'), '#12b76a'], ['Waiting', count('waiting'), '#f79009'],
+        ['Accepted', count('accepted') + count('interview'), '#0e9384']
+      ].map((p) => ({ label: p[0], value: p[1], color: p[2], flex: Math.max(p[1], 1), pct: Math.round((p[1] / this.OPPS.length) * 100) + '%' })),
+      taskSnapshot: this.TASKS.filter((t) => !taskDone(t)).slice(0, 4).map(decorateTask),
+      recentInbox: inboxItems.slice(0, 3),
+
+      inboxTabs: ['All', 'Unprocessed', 'Opportunities', 'Tasks', 'Notes'].map((t) => ({
+        label: t,
+        count: t === 'All' ? this.INBOX.length : (t === 'Unprocessed' ? this.INBOX.length : this.INBOX.filter((i) => i.kind + 's' === t).length),
+        line: S.inboxFilter === t ? '#2563eb' : 'transparent',
+        fg: S.inboxFilter === t ? '#101828' : '#667085',
+        onClick: () => this.setState({ inboxFilter: t })
+      })),
+      inboxItems: inboxItems, inboxEmpty: inboxItems.length === 0,
+
+      oppTabs: tabs.map((t) => Object.assign({
+        label: t[1], count: t[2],
+        line: S.tab === t[0] ? '#2563eb' : 'transparent',
+        fg: S.tab === t[0] ? '#101828' : '#667085',
+        onClick: () => this.setState({ tab: t[0] })
+      }, chip(S.tab === t[0]))),
+      query: S.q,
+      onQuery: (e) => this.setState({ q: e.target.value }),
+      resetFilters: () => this.setState({ q: '', tab: 'all' }),
+      loading: S.loading,
+      skeletons: S.loading ? [1, 2, 3, 4, 5, 6] : [],
+      rows: S.loading ? [] : rows.map((o) => Object.assign({}, o, {
+        rowBg: o.id === S.selected ? '#f8faff' : '#ffffff',
+        rowRing: o.id === S.selected ? 'inset 2px 0 0 #2563eb' : 'none'
+      })),
+      rowsEmpty: !S.loading && rows.length === 0,
+      rowsLabel: 'Showing ' + rows.length + ' of ' + this.OPPS.length + ' opportunities',
+      panelOpen: !mobile && !!byId[S.selected] && !S.loading,
+      closePanel: () => this.setState({ selected: null }),
+
+      sel: Object.assign({}, sel, {
+        desc: 'A funded program supporting early work in this space. Applications are reviewed on a rolling basis with decisions within four weeks of submission.',
+        applyUrl: 'https://' + sel.org.toLowerCase().replace(/[^a-z]+/g, '') + '.org/apply/' + sel.title.toLowerCase().replace(/[^a-z]+/g, '-'),
+        followUp: sel.d === null ? 'Not set' : 'Sep 5, 2026',
+        note1: 'Strong match for my backend experience. Focus the essay on the distributed systems project and reuse the grant intro paragraph.',
+        facts: [
+          { k: 'Organization', v: sel.org, color: '#344054' },
+          { k: 'Type', v: sel.type, color: '#344054' },
+          { k: 'Deadline', v: sel.date + ' · ' + sel.rel, color: sel.relColor },
+          { k: 'Funding', v: sel.fund, color: '#344054' },
+          { k: 'Location', v: sel.loc, color: '#344054' },
+          { k: 'Source', v: sel.src, color: '#344054' }
+        ],
+        infoRow: [
+          { k: 'Type', v: sel.type }, { k: 'Location', v: sel.loc },
+          { k: 'Eligibility', v: sel.elig }, { k: 'Funding', v: sel.fund }, { k: 'Source', v: sel.src }
+        ],
+        checklist: this.checklistFor(sel.id),
+        checkLabel: this.checklistFor(sel.id).filter((c) => c._done).length + ' / 6 completed',
+        checkPct: Math.round((this.checklistFor(sel.id).filter((c) => c._done).length / 6) * 100) + '%'
+      }),
+      detailTabs: [['details', 'Details'], ['tasks', 'Tasks'], ['notes', 'Notes'], ['activity', 'Activity']].map((t) => ({
+        label: t[1],
+        line: S.detailTab === t[0] ? '#2563eb' : 'transparent',
+        fg: S.detailTab === t[0] ? '#101828' : '#667085',
+        onClick: () => this.setState({ detailTab: t[0] })
+      })),
+      tabDetails: S.detailTab === 'details', tabTasks: S.detailTab === 'tasks',
+      tabNotes: S.detailTab === 'notes', tabActivity: S.detailTab === 'activity',
+      activity: this.ACTIVITY,
+      nextUp: dl.slice(0, 3),
+      applyNow: () => this.toast('Opening application in a new tab.'),
+      openSource: () => this.toast('Opening source link.'),
+      copyLink: () => this.toast('Application URL copied.'),
+      saveNote: () => this.toast('Note saved.'),
+      exportData: () => this.toast('Export started — check your downloads.'),
+
+      taskTabs: [['today', 'Today'], ['upcoming', 'Upcoming'], ['overdue', 'Overdue'], ['completed', 'Completed'], ['all', 'All']].map((t) => Object.assign({
+        label: t[1], count: taskCount(t[0]),
+        line: S.taskView === t[0] ? '#2563eb' : 'transparent',
+        fg: S.taskView === t[0] ? '#101828' : '#667085',
+        onClick: () => this.setState({ taskView: t[0] })
+      }, chip(S.taskView === t[0]))),
+      taskRows: taskRows, tasksEmpty: taskRows.length === 0,
+
+      calTabs: [['month', 'Month'], ['week', 'Week'], ['agenda', 'Agenda']].map((t) => ({
+        label: t[1],
+        bg: S.calView === t[0] ? '#ffffff' : 'transparent',
+        fg: S.calView === t[0] ? '#101828' : '#667085',
+        shadow: S.calView === t[0] ? '0 1px 2px rgba(16,24,40,0.08)' : 'none',
+        onClick: () => this.setState({ calView: t[0] })
+      })),
+      calMonth: S.calView === 'month' || S.calView === 'week',
+      calAgendaView: S.calView === 'agenda',
+      weekdays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((w) => ({ label: w })),
+      calCells: cells,
+      agenda: agenda,
+      legend: [
+        { label: 'Need to apply', color: '#2563eb' }, { label: 'In progress', color: '#6941c6' },
+        { label: 'Waiting / follow-up', color: '#f79009' }, { label: 'Applied', color: '#12b76a' }
+      ],
+
+      archTabs: ['Opportunities', 'Completed tasks'].map((t) => ({
+        label: t,
+        bg: S.archTab === t ? '#ffffff' : 'transparent',
+        fg: S.archTab === t ? '#101828' : '#667085',
+        shadow: S.archTab === t ? '0 1px 2px rgba(16,24,40,0.08)' : 'none',
+        onClick: () => this.setState({ archTab: t })
+      })),
+      archiveRows: S.archTab === 'Opportunities'
+        ? this.ARCHIVE_OPPS.map((a) => ({
+            title: a.title, meta: a.meta, state: a.state, mono: a.mono,
+            onRestore: () => this.toast('Opportunity restored.'),
+            onDelete: () => this.toast('Deleted permanently.')
+          }))
+        : this.TASKS.filter((t) => S.done[t.id] === undefined ? !!t.done : S.done[t.id]).map((t) => ({
+            title: t.title, meta: t.ctx + ' · completed ' + t.due, state: 'Completed', mono: t.type.slice(0, 2).toUpperCase(),
+            onRestore: () => this.toast('Task reopened.'),
+            onDelete: () => this.toast('Deleted permanently.')
+          })),
+
+      openAdd: () => this.setState({ modal: 'addOpp' }),
+      openCapture: () => this.setState({ modal: 'capture' }),
+      openTask: () => this.setState({ modal: 'task' }),
+      openApplied: () => this.setState({ modal: 'applied' }),
+      openDelete: () => this.setState({ modal: 'del' }),
+      closeModal: () => this.setState({ modal: null, advancedOpen: false }),
+      stop: (e) => { if (e && e.stopPropagation) e.stopPropagation(); },
+      modalOpen: !!S.modal,
+      modalAddOpp: S.modal === 'addOpp', modalCapture: S.modal === 'capture',
+      modalTask: S.modal === 'task', modalApplied: S.modal === 'applied', modalDelete: S.modal === 'del',
+      modalTitle: mm[0], modalSub: mm[1], modalWidth: mm[2], modalCta: mm[3], modalCtaBg: mm[4],
+      advancedOpen: S.advancedOpen,
+      advancedLabel: S.advancedOpen ? '− Hide advanced fields' : '+ Show advanced fields',
+      toggleAdvanced: () => this.setState((s) => ({ advancedOpen: !s.advancedOpen })),
+      followOptions: ['7 days', '14 days', '30 days', 'Custom', 'No follow-up'].map((f) => ({
+        label: f,
+        bg: S.follow === f ? '#eff4ff' : '#ffffff',
+        fg: S.follow === f ? '#1d4ed8' : '#344054',
+        border: S.follow === f ? '#c6d5f7' : '#d6dae1',
+        onClick: () => this.setState({ follow: f })
+      })),
+      confirmModal: () => {
+        const m = S.modal;
+        this.setState({ modal: null, advancedOpen: false });
+        if (m === 'addOpp') this.toast('Opportunity added.');
+        else if (m === 'capture') this.toast('Saved to inbox.');
+        else if (m === 'task') this.toast('Task added.');
+        else if (m === 'applied') this.toast('Opportunity marked as applied.');
+        else if (m === 'del') this.toast('Archived data deleted.');
+      },
+      toast: S.toast, toastOpen: !!S.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

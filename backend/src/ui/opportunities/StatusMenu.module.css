@@ -1,0 +1,59 @@
+.wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.trigger:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.caret {
+  font-size: 10px;
+  color: var(--text-faint);
+}
+
+.menu {
+  position: absolute;
+  top: 28px;
+  left: 0;
+  width: 176px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: 6px;
+  z-index: 50;
+  display: grid;
+  gap: 2px;
+  animation: ph-fade 0.14s ease both;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  border: none;
+  background: none;
+  padding: 6px;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  text-align: left;
+}
+
+.option:hover {
+  background: #f6f7f9;
+}
+
+.option[data-active="true"] {
+  background: var(--brand-soft);
+}

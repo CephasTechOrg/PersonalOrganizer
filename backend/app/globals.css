@@ -1,0 +1,355 @@
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-muted: #fbfcfd;
+  --surface-hover: #fafbfc;
+
+  --border: #e9ebef;
+  --border-strong: #d6dae1;
+  --line: #f1f2f5;
+
+  --text: #101828;
+  --text-secondary: #344054;
+  --text-muted: #667085;
+  --text-faint: #98a2b3;
+
+  --brand: #2563eb;
+  --brand-hover: #1d4ed8;
+  --brand-soft: #eff4ff;
+  --brand-border: #c6d5f7;
+
+  --danger: #b42318;
+  --danger-soft: #fef3f2;
+  --warning: #b54708;
+  --warning-soft: #fffaeb;
+  --success: #067647;
+  --success-soft: #ecfdf3;
+  --info: #026aa2;
+  --info-soft: #f0f9ff;
+  --purple: #6941c6;
+  --purple-soft: #f4f3ff;
+
+  --radius-lg: 14px;
+  --radius: 12px;
+  --radius-sm: 9px;
+  --radius-xs: 7px;
+
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-md: 0 4px 16px rgba(16, 24, 40, 0.1);
+  --shadow-panel: 0 8px 30px rgba(16, 24, 40, 0.14);
+
+  --ring: 0 0 0 3px rgba(37, 99, 235, 0.14);
+
+  --header-h: 64px;
+  --sidebar-w: 236px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-manrope), system-ui, -apple-system, sans-serif;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--brand);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--brand-hover);
+}
+
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+::placeholder {
+  color: var(--text-faint);
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+}
+
+@keyframes ph-shimmer {
+  0% {
+    background-position: -320px 0;
+  }
+  100% {
+    background-position: 320px 0;
+  }
+}
+
+@keyframes ph-fade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ph-panel {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ph-toast {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ph-overlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ph-modal {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Shared primitives */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 3px 8px;
+  white-space: nowrap;
+  background: #f2f4f7;
+  color: var(--text-secondary);
+}
+
+.chip[data-status="saved"],
+.chip[data-status="archived"],
+.chip[data-status="withdrawn"] {
+  background: #f2f4f7;
+  color: var(--text-secondary);
+}
+.chip[data-status="need_to_apply"] {
+  background: var(--brand-soft);
+  color: #175cd3;
+}
+.chip[data-status="in_progress"] {
+  background: var(--purple-soft);
+  color: var(--purple);
+}
+.chip[data-status="applied"],
+.chip[data-status="accepted"] {
+  background: var(--success-soft);
+  color: var(--success);
+}
+.chip[data-status="waiting"] {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+.chip[data-status="interview"] {
+  background: var(--info-soft);
+  color: var(--info);
+}
+.chip[data-status="rejected"] {
+  background: #f4f5f7;
+  color: var(--text-muted);
+}
+
+.chip[data-tone="overdue"] {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.chip[data-tone="soon"] {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+.chip[data-tone="later"] {
+  background: #f4f5f7;
+  color: var(--text-muted);
+}
+.chip[data-tone="none"] {
+  background: #f4f5f7;
+  color: var(--text-faint);
+}
+
+.chip[data-priority="urgent"],
+.chip[data-priority="high"] {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.chip[data-priority="normal"] {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+.chip[data-priority="low"] {
+  background: var(--info-soft);
+  color: #175cd3;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 15px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--brand);
+  color: #fff;
+}
+.btn-primary:not(:disabled):hover {
+  background: var(--brand-hover);
+}
+
+.btn-secondary {
+  background: var(--surface);
+  border-color: var(--border-strong);
+  color: var(--text-secondary);
+}
+.btn-secondary:not(:disabled):hover {
+  background: var(--surface-hover);
+  border-color: #b8c0cc;
+  color: var(--text);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+}
+.btn-ghost:hover {
+  background: #f2f4f7;
+  color: var(--text-secondary);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+}
+.btn-danger:hover {
+  background: #912018;
+}
+
+.btn-sm {
+  height: 32px;
+  padding: 0 12px;
+  font-size: 12.5px;
+  border-radius: var(--radius-xs);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  outline: none;
+  color: var(--text);
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.textarea {
+  height: auto;
+  min-height: 88px;
+  padding: 10px 12px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  border-color: var(--brand);
+  box-shadow: var(--ring);
+}
+
+.skeleton {
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f1f2f5, #e6e8ec, #f1f2f5);
+  background-size: 320px 100%;
+  animation: ph-shimmer 1.2s linear infinite;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
