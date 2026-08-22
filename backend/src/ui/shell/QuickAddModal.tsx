@@ -39,6 +39,7 @@ export function QuickAddModal({ open, mode, presets, onClose }: QuickAddModalPro
   const [organization, setOrganization] = useState("");
   const [type, setType] = useState<OpportunityType>("program");
   const [priority, setPriority] = useState<Priority>("normal");
+  const [openAt, setOpenAt] = useState("");
   const [deadlineAt, setDeadlineAt] = useState("");
   const [applicationUrl, setApplicationUrl] = useState("");
   const [sourceUrl, setSourceUrl] = useState("");
@@ -47,6 +48,9 @@ export function QuickAddModal({ open, mode, presets, onClose }: QuickAddModalPro
   const [kind, setKind] = useState<TaskKind>("complete");
   const [dueAt, setDueAt] = useState("");
   const [actionUrl, setActionUrl] = useState("");
+
+  // Shared
+  const [notes, setNotes] = useState("");
 
   const lockTask = !!presets?.opportunityId;
 
@@ -60,12 +64,14 @@ export function QuickAddModal({ open, mode, presets, onClose }: QuickAddModalPro
       setOrganization("");
       setType("program");
       setPriority("normal");
+      setOpenAt("");
       setDeadlineAt("");
       setApplicationUrl("");
       setSourceUrl("");
       setKind("complete");
       setDueAt("");
       setActionUrl("");
+      setNotes("");
     }
   }, [open, mode]);
 
@@ -86,9 +92,11 @@ export function QuickAddModal({ open, mode, presets, onClose }: QuickAddModalPro
           organization: organization.trim() || null,
           type,
           priority,
+          openAt: openAt ? new Date(openAt).toISOString() : null,
           deadlineAt: deadlineAt ? new Date(deadlineAt).toISOString() : null,
           applicationUrl: applicationUrl.trim() || null,
           sourceUrl: sourceUrl.trim() || null,
+          notes: notes.trim() || null,
         });
         toast.success("Opportunity added.");
       } else {
@@ -99,6 +107,7 @@ export function QuickAddModal({ open, mode, presets, onClose }: QuickAddModalPro
           dueAt: dueAt ? new Date(dueAt).toISOString() : null,
           actionUrl: actionUrl.trim() || null,
           opportunityId: presets?.opportunityId ?? null,
+          notes: notes.trim() || null,
         });
         toast.success("Task added.");
       }
@@ -198,6 +207,16 @@ export function QuickAddModal({ open, mode, presets, onClose }: QuickAddModalPro
 
             <div className={styles.row}>
               <label className={styles.field}>
+                <span className="field-label">Opening date</span>
+                <input
+                  type="date"
+                  className="input"
+                  value={openAt}
+                  onChange={(e) => setOpenAt(e.target.value)}
+                />
+                <span className={styles.fieldHint}>Leave blank if already open</span>
+              </label>
+              <label className={styles.field}>
                 <span className="field-label">Deadline</span>
                 <input
                   type="date"
@@ -206,21 +225,33 @@ export function QuickAddModal({ open, mode, presets, onClose }: QuickAddModalPro
                   onChange={(e) => setDeadlineAt(e.target.value)}
                 />
               </label>
-              <label className={styles.field}>
-                <span className="field-label">Priority</span>
-                <select
-                  className="select"
-                  value={priority}
-                  onChange={(e) => setPriority(e.target.value as Priority)}
-                >
-                  {PRIORITIES.map((p) => (
-                    <option key={p} value={p}>
-                      {p[0].toUpperCase() + p.slice(1)}
-                    </option>
-                  ))}
-                </select>
-              </label>
             </div>
+
+            <label className={styles.field}>
+              <span className="field-label">Priority</span>
+              <select
+                className="select"
+                value={priority}
+                onChange={(e) => setPriority(e.target.value as Priority)}
+              >
+                {PRIORITIES.map((p) => (
+                  <option key={p} value={p}>
+                    {p[0].toUpperCase() + p.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className={styles.field}>
+              <span className="field-label">Notes</span>
+              <textarea
+                className="textarea"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Optional — essay required, eligibility, reminders…"
+                rows={2}
+              />
+            </label>
 
             <button
               type="button"
@@ -283,6 +314,16 @@ export function QuickAddModal({ open, mode, presets, onClose }: QuickAddModalPro
                 value={actionUrl}
                 onChange={(e) => setActionUrl(e.target.value)}
                 placeholder="Optional link to open"
+              />
+            </label>
+            <label className={styles.field}>
+              <span className="field-label">Notes</span>
+              <textarea
+                className="textarea"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Optional details…"
+                rows={2}
               />
             </label>
           </>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { Monogram } from "@/ui/components/Monogram";
 import { ExternalIcon } from "@/ui/components/icons";
@@ -7,11 +8,13 @@ import {
   PRIORITY_LABEL,
   TYPE_LABEL,
   formatDate,
+  openingState,
   relativeDeadline,
 } from "@/ui/lib/format";
 import { setOpportunityStatus } from "@/ui/lib/mutations";
 import type { Opportunity } from "@/ui/lib/types";
 import { useToast } from "@/ui/shell/ToastProvider";
+import { EditOpportunityModal } from "./EditOpportunityModal";
 import { LinkedTasks } from "./LinkedTasks";
 import { StatusMenu } from "./StatusMenu";
 import styles from "./OpportunityPanel.module.css";
@@ -23,7 +26,9 @@ interface OpportunityPanelProps {
 
 export function OpportunityPanel({ opp, onClose }: OpportunityPanelProps) {
   const toast = useToast();
+  const [editing, setEditing] = useState(false);
   const rel = relativeDeadline(opp.deadlineAt);
+  const opening = openingState(opp.openAt);
   const applyUrl = opp.applicationUrl;
   const sourceUrl = opp.sourceUrl;
   const canApply = opp.status === "need_to_apply" || opp.status === "saved";
@@ -42,6 +47,11 @@ export function OpportunityPanel({ opp, onClose }: OpportunityPanelProps) {
   const facts: { k: string; v: string; tone?: string }[] = [
     { k: "Organization", v: opp.organization || "—" },
     { k: "Type", v: TYPE_LABEL[opp.type] },
+    {
+      k: "Opens",
+      v: opp.openAt ? `${formatDate(opp.openAt)} · ${opening.label}` : "Already open",
+      tone: opening.tone === "none" ? undefined : opening.tone,
+    },
     { k: "Deadline", v: opp.deadlineAt ? `${formatDate(opp.deadlineAt)} · ${rel.label}` : "No deadline", tone: rel.tone },
     { k: "Follow-up", v: formatDate(opp.followUpAt) },
     { k: "Location", v: opp.location || (opp.isRemote ? "Remote" : "—") },
@@ -60,6 +70,11 @@ export function OpportunityPanel({ opp, onClose }: OpportunityPanelProps) {
           </div>
           <div className={styles.chips}>
             <StatusMenu id={opp.id} status={opp.status} />
+            {opening.label ? (
+              <span className="chip" data-tone={opening.tone}>
+                {opening.label}
+              </span>
+            ) : null}
           </div>
         </div>
         <button type="button" className={styles.close} onClick={onClose} aria-label="Close">
@@ -111,11 +126,16 @@ export function OpportunityPanel({ opp, onClose }: OpportunityPanelProps) {
         <LinkedTasks opportunityId={opp.id} opportunityTitle={opp.title} />
       </div>
 
-      <div className={styles.footer}>
-        <Link href={`/opportunities/${opp.id}`} className="btn btn-secondary btn-sm" style={{ width: "100%" }}>
-          Open full workspace →
+      <div className={styles.footerRow}>
+        <button type="button" className="btn btn-secondary btn-sm" onClick={() => setEditing(true)}>
+          Edit
+        </button>
+        <Link href={`/opportunities/${opp.id}`} className="btn btn-secondary btn-sm">
+          Open workspace →
         </Link>
       </div>
+
+      <EditOpportunityModal opp={opp} open={editing} onClose={() => setEditing(false)} />
     </aside>
   );
 }

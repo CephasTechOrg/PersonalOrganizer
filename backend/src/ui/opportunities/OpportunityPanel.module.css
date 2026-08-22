@@ -126,3 +126,14 @@
 .footer {
   padding: 16px 18px 20px;
 }
+
+.footerRow {
+  display: flex;
+  gap: 8px;
+  padding: 16px 18px 20px;
+}
+
+.footerRow .btn,
+.footerRow a {
+  flex: 1;
+}

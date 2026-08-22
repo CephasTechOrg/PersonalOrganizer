@@ -47,6 +47,7 @@ export interface Opportunity {
   nextAction: string | null;
   location: string | null;
   isRemote: boolean | null;
+  openAt: string | null;
   deadlineAt: string | null;
   followUpAt: string | null;
   appliedAt: string | null;
@@ -80,6 +81,7 @@ export interface DashboardData {
   followUps: Opportunity[];
   overdueTasks: Task[];
   upcomingTasks: Task[];
+  openingSoon: Opportunity[];
 }
 
 export interface ListMeta {

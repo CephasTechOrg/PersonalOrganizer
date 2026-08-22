@@ -12,6 +12,7 @@ import {
   TYPE_LABEL,
   formatDate,
   openLinkFor,
+  openingState,
   opportunityActionLabel,
   relativeDeadline,
   relativeDue,
@@ -193,6 +194,9 @@ export function HomeView() {
 
       <aside className={styles.rail}>
         <DeadlinesCard opportunities={dash.dueSoon} />
+        {dash.openingSoon && dash.openingSoon.length > 0 ? (
+          <OpeningSoonCard opportunities={dash.openingSoon} />
+        ) : null}
         {dash.followUps.length > 0 ? <FollowUpsCard opportunities={dash.followUps} /> : null}
         <TasksCard
           tasks={[...dash.overdueTasks, ...dash.upcomingTasks]}
@@ -284,6 +288,38 @@ function DeadlinesCard({ opportunities }: { opportunities: Opportunity[] }) {
           );
         })
       )}
+    </div>
+  );
+}
+
+function OpeningSoonCard({ opportunities }: { opportunities: Opportunity[] }) {
+  return (
+    <div className="card" style={{ padding: "16px 16px 12px" }}>
+      <div className={styles.railHead}>
+        <span className={styles.railTitle}>Opening soon</span>
+        <Link href="/opportunities?status=upcoming" className={styles.viewAll}>
+          View all
+        </Link>
+      </div>
+      {opportunities.slice(0, 5).map((opp) => {
+        const { mon, day } = shortMonth(opp.openAt);
+        const opening = openingState(opp.openAt);
+        return (
+          <Link key={opp.id} href={`/opportunities/${opp.id}`} className={styles.deadlineRow}>
+            <div className={styles.deadlineDate}>
+              <div className={styles.deadlineMon}>{mon}</div>
+              <div className={styles.deadlineDay}>{day}</div>
+            </div>
+            <div className={styles.deadlineBody}>
+              <div className={styles.deadlineTitle}>{opp.title}</div>
+              <div className={styles.deadlineOrg}>{opp.organization ?? TYPE_LABEL[opp.type]}</div>
+              <span className="chip" data-tone={opening.tone} style={{ marginTop: 5 }}>
+                {opening.label}
+              </span>
+            </div>
+          </Link>
+        );
+      })}
     </div>
   );
 }

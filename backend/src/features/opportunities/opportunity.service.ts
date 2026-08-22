@@ -50,6 +50,8 @@ export async function listOpportunities(query: OpportunityListQuery) {
   if (query.priority) conditions.push(eq(opportunities.priority, query.priority));
   if (query.deadlineBefore) conditions.push(lte(opportunities.deadlineAt, query.deadlineBefore));
   if (query.deadlineAfter) conditions.push(gte(opportunities.deadlineAt, query.deadlineAfter));
+  if (query.openBefore) conditions.push(lte(opportunities.openAt, query.openBefore));
+  if (query.openAfter) conditions.push(gte(opportunities.openAt, query.openAfter));
   if (query.q) {
     const pattern = `%${query.q}%`;
     conditions.push(
@@ -65,6 +67,7 @@ export async function listOpportunities(query: OpportunityListQuery) {
   const where = conditions.length ? and(...conditions) : undefined;
   const sortColumn = {
     deadline: opportunities.deadlineAt,
+    opening: opportunities.openAt,
     created: opportunities.createdAt,
     updated: opportunities.updatedAt,
     title: opportunities.title,

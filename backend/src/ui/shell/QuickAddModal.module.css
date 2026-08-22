@@ -52,6 +52,27 @@
   min-width: 0;
 }
 
+.fieldHint {
+  font-size: 11.5px;
+  color: var(--text-faint);
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.checkboxRow input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
 .advancedToggle {
   justify-self: start;
   border: none;

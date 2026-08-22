@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { EmptyState } from "@/ui/components/EmptyState";
@@ -10,6 +11,7 @@ import {
   PRIORITY_LABEL,
   TYPE_LABEL,
   formatDate,
+  openingState,
   relativeDeadline,
 } from "@/ui/lib/format";
 import { setOpportunityStatus } from "@/ui/lib/mutations";
@@ -17,6 +19,7 @@ import { useResource } from "@/ui/lib/useResource";
 import type { Opportunity } from "@/ui/lib/types";
 import { useQuickAdd } from "@/ui/shell/QuickAddProvider";
 import { useToast } from "@/ui/shell/ToastProvider";
+import { EditOpportunityModal } from "./EditOpportunityModal";
 import { LinkedTasks } from "./LinkedTasks";
 import { NotesEditor } from "./NotesEditor";
 import { StatusMenu } from "./StatusMenu";
@@ -26,6 +29,7 @@ export function OpportunityDetail({ id }: { id: string }) {
   const router = useRouter();
   const toast = useToast();
   const quickAdd = useQuickAdd();
+  const [editing, setEditing] = useState(false);
 
   const { data, loading, error, reload } = useResource<Opportunity>(
     () => api.get<Opportunity>(`/api/opportunities/${id}`),
@@ -55,6 +59,7 @@ export function OpportunityDetail({ id }: { id: string }) {
 
   const opp = data as Opportunity;
   const rel = relativeDeadline(opp.deadlineAt);
+  const opening = openingState(opp.openAt);
   const link = opp.applicationUrl || opp.sourceUrl;
   const canApply = opp.status === "need_to_apply" || opp.status === "saved";
 
@@ -77,8 +82,8 @@ export function OpportunityDetail({ id }: { id: string }) {
 
   const infoRow = [
     { k: "Type", v: TYPE_LABEL[opp.type] },
+    { k: "Opens", v: opp.openAt ? formatDate(opp.openAt) : "Already open" },
     { k: "Location", v: opp.location || (opp.isRemote ? "Remote" : "—") },
-    { k: "Priority", v: PRIORITY_LABEL[opp.priority] },
     { k: "Follow-up", v: formatDate(opp.followUpAt) },
     { k: "Applied", v: formatDate(opp.appliedAt) },
   ];
@@ -100,6 +105,11 @@ export function OpportunityDetail({ id }: { id: string }) {
             </div>
             <div className={styles.chips}>
               <StatusMenu id={opp.id} status={opp.status} />
+              {opening.label ? (
+                <span className="chip" data-tone={opening.tone}>
+                  {opening.label}
+                </span>
+              ) : null}
               <span className="chip" data-priority={opp.priority}>
                 {PRIORITY_LABEL[opp.priority]} priority
               </span>
@@ -139,6 +149,9 @@ export function OpportunityDetail({ id }: { id: string }) {
             onClick={() => quickAdd.open("task", { opportunityId: opp.id, opportunityTitle: opp.title })}
           >
             + Add task
+          </button>
+          <button type="button" className="btn btn-secondary" onClick={() => setEditing(true)}>
+            Edit
           </button>
         </div>
 
@@ -201,6 +214,10 @@ export function OpportunityDetail({ id }: { id: string }) {
           <div className={styles.facts}>
             <Fact k="Organization" v={opp.organization || "—"} />
             <Fact k="Type" v={TYPE_LABEL[opp.type]} />
+            <Fact
+              k="Opening date"
+              v={opp.openAt ? `${formatDate(opp.openAt)} · ${opening.label}` : "Already open"}
+            />
             <Fact k="Deadline" v={opp.deadlineAt ? `${formatDate(opp.deadlineAt)} · ${rel.label}` : "No deadline"} />
             <Fact k="Follow-up" v={formatDate(opp.followUpAt)} />
             <Fact k="Location" v={opp.location || (opp.isRemote ? "Remote" : "—")} />
@@ -208,6 +225,8 @@ export function OpportunityDetail({ id }: { id: string }) {
           </div>
         </div>
       </aside>
+
+      <EditOpportunityModal opp={opp} open={editing} onClose={() => setEditing(false)} />
     </div>
   );
 }

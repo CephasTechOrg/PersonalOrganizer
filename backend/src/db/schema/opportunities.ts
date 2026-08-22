@@ -17,6 +17,7 @@ export const opportunities = pgTable(
     nextAction: text("next_action"),
     location: text("location"),
     isRemote: boolean("is_remote"),
+    openAt: timestamp("open_at", { withTimezone: true }),
     deadlineAt: timestamp("deadline_at", { withTimezone: true }),
     followUpAt: timestamp("follow_up_at", { withTimezone: true }),
     appliedAt: timestamp("applied_at", { withTimezone: true }),
@@ -27,6 +28,7 @@ export const opportunities = pgTable(
   (table) => [
     index("opportunities_status_idx").on(table.status),
     index("opportunities_type_idx").on(table.type),
+    index("opportunities_open_idx").on(table.openAt),
     index("opportunities_deadline_idx").on(table.deadlineAt),
     index("opportunities_follow_up_idx").on(table.followUpAt),
     index("opportunities_created_idx").on(table.createdAt),

@@ -11,6 +11,8 @@ export async function getDashboard() {
   const now = new Date();
   const sevenDays = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
+  const thirtyDays = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
   const [
     statusCounts,
     dueSoon,
@@ -19,6 +21,7 @@ export async function getDashboard() {
     upcomingTasks,
     overdueTasks,
     overdueCount,
+    openingSoon,
   ] = await Promise.all([
     db
       .select({ status: opportunities.status, count: count() })
@@ -96,6 +99,18 @@ export async function getDashboard() {
           lt(opportunities.deadlineAt, now),
         ),
       ),
+    db
+      .select()
+      .from(opportunities)
+      .where(
+        and(
+          isNotNull(opportunities.openAt),
+          gte(opportunities.openAt, now),
+          lte(opportunities.openAt, thirtyDays),
+        ),
+      )
+      .orderBy(asc(opportunities.openAt))
+      .limit(10),
   ]);
 
   const counts = Object.fromEntries(statusCounts.map((row) => [row.status, row.count]));
@@ -111,5 +126,6 @@ export async function getDashboard() {
     followUps,
     overdueTasks,
     upcomingTasks,
+    openingSoon,
   };
 }

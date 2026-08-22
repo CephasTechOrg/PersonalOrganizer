@@ -199,6 +199,10 @@ p {
   color: var(--text-muted);
 }
 
+.chip[data-tone="open"] {
+  background: var(--success-soft);
+  color: var(--success);
+}
 .chip[data-tone="overdue"] {
   background: var(--danger-soft);
   color: var(--danger);

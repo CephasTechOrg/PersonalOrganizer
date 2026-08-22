@@ -45,6 +45,7 @@ export const createOpportunitySchema = z.object({
   nextAction: z.string().trim().max(500).nullable().optional(),
   location: z.string().trim().max(300).nullable().optional(),
   isRemote: z.boolean().nullable().optional(),
+  openAt: optionalDate,
   deadlineAt: optionalDate,
   followUpAt: optionalDate,
 });
@@ -63,7 +64,9 @@ export const opportunityListQuerySchema = z.object({
   priority: z.enum(priorities).optional(),
   deadlineBefore: z.coerce.date().optional(),
   deadlineAfter: z.coerce.date().optional(),
-  sort: z.enum(["deadline", "created", "updated", "title"]).default("deadline"),
+  openBefore: z.coerce.date().optional(),
+  openAfter: z.coerce.date().optional(),
+  sort: z.enum(["deadline", "opening", "created", "updated", "title"]).default("deadline"),
   order: z.enum(["asc", "desc"]).default("asc"),
 });
 

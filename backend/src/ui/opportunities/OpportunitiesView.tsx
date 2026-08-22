@@ -11,6 +11,7 @@ import {
   STATUS_LABEL,
   TYPE_LABEL,
   formatDate,
+  openingState,
   relativeDeadline,
 } from "@/ui/lib/format";
 import { useResource } from "@/ui/lib/useResource";
@@ -28,6 +29,7 @@ import styles from "./OpportunitiesView.module.css";
 
 const TABS: { key: string; label: string; status?: OpportunityStatus }[] = [
   { key: "all", label: "All" },
+  { key: "upcoming", label: "Coming soon" },
   { key: "need_to_apply", label: "Need to apply", status: "need_to_apply" },
   { key: "in_progress", label: "In progress", status: "in_progress" },
   { key: "applied", label: "Applied", status: "applied" },
@@ -98,20 +100,26 @@ export function OpportunitiesView() {
     return () => clearTimeout(t);
   }, [searchInput, q, setParams]);
 
+  const sortParam = params.get("sort");
+  const isUpcoming = status === "upcoming";
+
   const queryString = useMemo(() => {
     const win = deadlineWindow(due);
+    const effectiveSort = isUpcoming && !sortParam ? "opening" : sort;
+    const effectiveOrder = isUpcoming && !sortParam ? "asc" : order;
     return buildQuery({
       page,
       limit: PAGE_LIMIT,
       q: q || undefined,
-      status: status === "all" ? undefined : status,
+      status: status === "all" || isUpcoming ? undefined : status,
+      openAfter: isUpcoming ? new Date().toISOString() : undefined,
       type: type || undefined,
       priority: priority || undefined,
-      sort,
-      order,
+      sort: effectiveSort,
+      order: effectiveOrder,
       ...win,
     });
-  }, [page, q, status, type, priority, due, sort, order]);
+  }, [page, q, status, isUpcoming, sortParam, type, priority, due, sort, order]);
 
   const { data, loading, error, reload } = useResource(
     () => api.getList<Opportunity>(`/api/opportunities${queryString}`),
@@ -218,6 +226,7 @@ export function OpportunitiesView() {
             }}
           >
             <option value="deadline:asc">Deadline soonest</option>
+            <option value="opening:asc">Opening soonest</option>
             <option value="created:desc">Recently added</option>
             <option value="updated:desc">Recently updated</option>
             <option value="title:asc">Title A–Z</option>
@@ -348,13 +357,20 @@ function DesktopRow({
   onClick: () => void;
 }) {
   const rel = relativeDeadline(opp.deadlineAt);
+  const opening = openingState(opp.openAt);
   return (
     <div className={styles.row} data-active={active} onClick={onClick}>
       <div className={styles.cellTitle}>
         <Monogram name={opp.organization ?? opp.title} size={30} />
         <div className={styles.titleBox}>
           <div className={styles.rowTitle}>{opp.title}</div>
-          {opp.nextAction ? <div className={styles.rowNote}>{opp.nextAction}</div> : null}
+          {opening.isUpcoming ? (
+            <span className="chip" data-tone={opening.tone} style={{ marginTop: 4 }}>
+              {opening.label}
+            </span>
+          ) : opp.nextAction ? (
+            <div className={styles.rowNote}>{opp.nextAction}</div>
+          ) : null}
         </div>
       </div>
       <div className={styles.cellMuted}>{opp.organization || "—"}</div>
@@ -383,6 +399,7 @@ function DesktopRow({
 
 function MobileRow({ opp, onClick }: { opp: Opportunity; onClick: () => void }) {
   const rel = relativeDeadline(opp.deadlineAt);
+  const opening = openingState(opp.openAt);
   return (
     <div className={styles.mobileRow} onClick={onClick}>
       <Monogram name={opp.organization ?? opp.title} size={34} />
@@ -396,9 +413,15 @@ function MobileRow({ opp, onClick }: { opp: Opportunity; onClick: () => void }) 
           <span className="chip" data-status={opp.status}>
             {STATUS_LABEL[opp.status]}
           </span>
-          <span className="chip" data-tone={rel.tone}>
-            {rel.label}
-          </span>
+          {opening.isUpcoming ? (
+            <span className="chip" data-tone={opening.tone}>
+              {opening.label}
+            </span>
+          ) : (
+            <span className="chip" data-tone={rel.tone}>
+              {rel.label}
+            </span>
+          )}
         </div>
       </div>
     </div>

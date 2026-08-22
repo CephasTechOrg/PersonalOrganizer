@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { EmptyState } from "@/ui/components/EmptyState";
 import { api, buildQuery } from "@/ui/lib/api";
-import { relativeDeadline } from "@/ui/lib/format";
+import { openingState, relativeDeadline } from "@/ui/lib/format";
 import { useResource } from "@/ui/lib/useResource";
 import type { Opportunity } from "@/ui/lib/types";
 import styles from "./CalendarView.module.css";
@@ -19,9 +19,15 @@ interface CalEvent {
   key: string;
   date: Date;
   title: string;
-  kind: "deadline" | "followup";
+  kind: "deadline" | "followup" | "opening";
   oppId: string;
 }
+
+const KIND_LABEL: Record<CalEvent["kind"], string> = {
+  deadline: "Deadline",
+  opening: "Opens",
+  followup: "Follow-up",
+};
 
 function dayKey(d: Date): string {
   return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
@@ -45,6 +51,15 @@ export function CalendarView() {
   const events = useMemo(() => {
     const list: CalEvent[] = [];
     for (const opp of opps) {
+      if (opp.openAt) {
+        list.push({
+          key: `${opp.id}-o`,
+          date: new Date(opp.openAt),
+          title: opp.title,
+          kind: "opening",
+          oppId: opp.id,
+        });
+      }
       if (opp.deadlineAt) {
         list.push({
           key: `${opp.id}-d`,
@@ -179,7 +194,9 @@ export function CalendarView() {
           ) : (
             <div className={styles.agenda}>
               {agenda.map((ev) => {
-                const rel = relativeDeadline(ev.date.toISOString());
+                const iso = ev.date.toISOString();
+                const relLabel =
+                  ev.kind === "opening" ? openingState(iso).label : relativeDeadline(iso).label;
                 return (
                   <button
                     key={ev.key}
@@ -191,7 +208,7 @@ export function CalendarView() {
                     <span className={styles.agendaBody}>
                       <span className={styles.agendaName}>{ev.title}</span>
                       <span className={styles.agendaMeta}>
-                        {ev.kind === "deadline" ? "Deadline" : "Follow-up"} · {rel.label}
+                        {KIND_LABEL[ev.kind]} · {relLabel}
                       </span>
                     </span>
                   </button>
@@ -202,6 +219,9 @@ export function CalendarView() {
         </div>
 
         <div className={styles.legend}>
+          <span className={styles.legendItem}>
+            <span className={styles.agendaDot} data-kind="opening" /> Opens
+          </span>
           <span className={styles.legendItem}>
             <span className={styles.agendaDot} data-kind="deadline" /> Deadline
           </span>

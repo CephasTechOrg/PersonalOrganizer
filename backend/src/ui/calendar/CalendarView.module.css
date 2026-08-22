@@ -141,6 +141,11 @@
   color: var(--warning);
 }
 
+.event[data-kind="opening"] {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
 .more {
   font-size: 10.5px;
   color: var(--text-faint);
@@ -190,6 +195,10 @@
 
 .agendaDot[data-kind="followup"] {
   background: var(--warning);
+}
+
+.agendaDot[data-kind="opening"] {
+  background: var(--success);
 }
 
 .agendaBody {

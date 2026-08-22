@@ -131,6 +131,22 @@ export function relativeDue(iso: string | null | undefined): {
   return { label: formatDate(iso), tone: "later" };
 }
 
+export type OpeningTone = "open" | "soon" | "later" | "none";
+
+export function openingState(iso: string | null | undefined): {
+  label: string;
+  tone: OpeningTone;
+  isOpen: boolean;
+  isUpcoming: boolean;
+} {
+  const days = daysUntil(iso);
+  if (days === null) return { label: "", tone: "none", isOpen: false, isUpcoming: false };
+  if (days <= 0) return { label: "Open now", tone: "open", isOpen: true, isUpcoming: false };
+  if (days === 1) return { label: "Opens tomorrow", tone: "soon", isOpen: false, isUpcoming: true };
+  if (days <= 14) return { label: `Opens in ${days} days`, tone: "soon", isOpen: false, isUpcoming: true };
+  return { label: `Opens ${formatDate(iso)}`, tone: "later", isOpen: false, isUpcoming: true };
+}
+
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 export function formatDate(iso: string | null | undefined): string {
