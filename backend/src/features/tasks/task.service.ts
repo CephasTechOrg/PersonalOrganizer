@@ -10,18 +10,24 @@ import {
   type SQL,
 } from "drizzle-orm";
 import { tasks } from "@/db/schema";
+import { getOpportunity } from "@/features/opportunities/opportunity.service";
 import { recordAudit } from "@/features/audit/audit.service";
 import { getDb } from "@/lib/db";
 import { NotFoundError } from "@/lib/errors";
 import type { CreateTaskInput, TaskListQuery, UpdateTaskInput } from "./task.schemas";
 
-export async function createTask(input: CreateTaskInput) {
+export async function createTask(userId: string, input: CreateTaskInput) {
   const db = getDb();
+  if (input.opportunityId) {
+    await getOpportunity(userId, input.opportunityId);
+  }
+
   const now = new Date();
   const [created] = await db
     .insert(tasks)
     .values({
       ...input,
+      userId,
       completedAt: input.status === "done" ? now : undefined,
     })
     .returning();
@@ -30,14 +36,14 @@ export async function createTask(input: CreateTaskInput) {
     entityType: "task",
     entityId: created.id,
     action: "created",
-    metadata: { opportunityId: created.opportunityId },
+    metadata: { opportunityId: created.opportunityId, userId },
   });
   return created;
 }
 
-export async function listTasks(query: TaskListQuery) {
+export async function listTasks(userId: string, query: TaskListQuery) {
   const db = getDb();
-  const conditions: SQL[] = [];
+  const conditions: SQL[] = [eq(tasks.userId, userId)];
 
   if (query.status) conditions.push(eq(tasks.status, query.status));
   if (query.priority) conditions.push(eq(tasks.priority, query.priority));
@@ -47,7 +53,7 @@ export async function listTasks(query: TaskListQuery) {
   if (query.dueAfter) conditions.push(gte(tasks.dueAt, query.dueAfter));
   if (query.q) conditions.push(ilike(tasks.title, `%${query.q}%`));
 
-  const where = conditions.length ? and(...conditions) : undefined;
+  const where = and(...conditions);
   const sortColumn = {
     due: tasks.dueAt,
     created: tasks.createdAt,
@@ -71,39 +77,51 @@ export async function listTasks(query: TaskListQuery) {
   return { rows, total: totalRows[0]?.value ?? 0 };
 }
 
-export async function getTask(id: string) {
+export async function getTask(userId: string, id: string) {
   const db = getDb();
-  const [row] = await db.select().from(tasks).where(eq(tasks.id, id)).limit(1);
+  const [row] = await db
+    .select()
+    .from(tasks)
+    .where(and(eq(tasks.id, id), eq(tasks.userId, userId)))
+    .limit(1);
   if (!row) throw new NotFoundError("Task not found");
   return row;
 }
 
-export async function updateTask(id: string, input: UpdateTaskInput) {
+export async function updateTask(userId: string, id: string, input: UpdateTaskInput) {
   const db = getDb();
-  await getTask(id);
+  await getTask(userId, id);
+
+  if (input.opportunityId) {
+    await getOpportunity(userId, input.opportunityId);
+  }
 
   const values: Partial<typeof tasks.$inferInsert> = { ...input, updatedAt: new Date() };
   if (input.status === "done" && input.completedAt === undefined) values.completedAt = new Date();
   if (input.status && input.status !== "done" && input.completedAt === undefined) values.completedAt = null;
 
-  const [updated] = await db.update(tasks).set(values).where(eq(tasks.id, id)).returning();
+  const [updated] = await db
+    .update(tasks)
+    .set(values)
+    .where(and(eq(tasks.id, id), eq(tasks.userId, userId)))
+    .returning();
   await recordAudit({
     entityType: "task",
     entityId: id,
     action: "updated",
-    metadata: { fields: Object.keys(input) },
+    metadata: { fields: Object.keys(input), userId },
   });
   return updated;
 }
 
-export async function deleteTask(id: string) {
+export async function deleteTask(userId: string, id: string) {
   const db = getDb();
-  const existing = await getTask(id);
-  await db.delete(tasks).where(eq(tasks.id, id));
+  const existing = await getTask(userId, id);
+  await db.delete(tasks).where(and(eq(tasks.id, id), eq(tasks.userId, userId)));
   await recordAudit({
     entityType: "task",
     entityId: id,
     action: "deleted",
-    metadata: { title: existing.title },
+    metadata: { title: existing.title, userId },
   });
 }

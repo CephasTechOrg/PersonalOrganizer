@@ -13,6 +13,9 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "auth:hash": "tsx scripts/hash-password.ts",
+    "auth:bootstrap": "tsx scripts/bootstrap-multiuser.ts",
+    "auth:create-user": "tsx scripts/create-user.ts",
+    "auth:set-password": "tsx scripts/set-password.ts",
     "deploy:check": "tsx scripts/deploy-check.ts",
     "db:setup": "drizzle-kit generate && drizzle-kit migrate"
   },

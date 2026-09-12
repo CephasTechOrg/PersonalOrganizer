@@ -34,9 +34,17 @@ export function SettingsView() {
         <div className={styles.row}>
           <div>
             <div className={styles.label}>Access</div>
-            <div className={styles.value}>Owner-only · private workspace</div>
+            <div className={styles.value}>Private hub · your data only</div>
           </div>
         </div>
+      </div>
+
+      <div className="card" style={{ padding: 20, marginTop: 18 }}>
+        <div className={styles.sectionTitle}>Other people</div>
+        <p className={styles.help}>
+          Each account has a separate empty hub. Friends cannot see your opportunities or tasks.
+          New users are created with the CLI: <code>npm run auth:create-user</code>.
+        </p>
       </div>
 
       <div className="card" style={{ padding: 20, marginTop: 18 }}>

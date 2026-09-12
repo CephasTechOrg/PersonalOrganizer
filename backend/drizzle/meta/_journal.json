@@ -15,6 +15,13 @@
       "when": 1787383255018,
       "tag": "0001_outstanding_catseye",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789230000000,
+      "tag": "0002_multi_user_isolation",
+      "breakpoints": true
     }
   ]
 }

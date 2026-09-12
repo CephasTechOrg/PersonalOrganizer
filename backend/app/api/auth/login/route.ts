@@ -1,4 +1,4 @@
-import { authenticateOwner } from "@/features/auth/auth.service";
+import { authenticateUser } from "@/features/auth/auth.service";
 import { loginSchema } from "@/features/auth/auth.schemas";
 import { ok, withErrorHandling } from "@/lib/http";
 import { assertSameOrigin, parseJson } from "@/lib/request";
@@ -9,9 +9,9 @@ export const runtime = "nodejs";
 export const POST = withErrorHandling(async (request: Request) => {
   assertSameOrigin(request);
   const input = await parseJson(request, loginSchema);
-  const owner = await authenticateOwner(request, input.email, input.password);
-  const token = await createSessionToken();
-  const response = ok(owner);
+  const user = await authenticateUser(request, input.email, input.password);
+  const token = await createSessionToken(user);
+  const response = ok({ email: user.email });
 
   response.cookies.set(sessionCookie.name, token, {
     httpOnly: true,

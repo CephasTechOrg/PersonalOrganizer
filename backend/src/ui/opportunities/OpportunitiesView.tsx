@@ -149,8 +149,8 @@ export function OpportunitiesView() {
       <div className={styles.mainCol}>
         <div className={styles.header}>
           <div>
-            <h1 className={styles.title}>Opportunities</h1>
-            <p className={styles.subtitle}>
+            <h1 className="pageTitle">Opportunities</h1>
+            <p className="pageSubtitle">
               Track applications, programs, funding, internships, and events.
             </p>
           </div>

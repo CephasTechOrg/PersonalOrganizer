@@ -110,8 +110,8 @@ export function TasksView() {
     <div className={styles.wrap}>
       <div className={styles.header}>
         <div>
-          <h1 className={styles.title}>Tasks</h1>
-          <p className={styles.subtitle}>
+          <h1 className="pageTitle">Tasks</h1>
+          <p className="pageSubtitle">
             Everything you need to complete, from applications to personal work.
           </p>
         </div>

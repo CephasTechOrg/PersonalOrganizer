@@ -1,26 +1,27 @@
-# Personal Hub Backend Starter
+# Personal Hub
 
-A private, owner-only backend starter for tracking opportunities, applications, deadlines, follow-ups, and tasks.
+A private per-user hub for tracking opportunities, applications, deadlines, follow-ups, and tasks. Each account only sees its own data.
 
 ## Stack
 
-- Next.js 16 route handlers
+- Next.js 16 (UI + API)
 - TypeScript
 - Neon PostgreSQL
 - Drizzle ORM
 - Zod validation
 - Vercel deployment
-- Owner-only signed-cookie authentication
+- Cookie session auth (per-user isolation)
 
-The frontend and API can live in the same Next.js repository. Neon stores persistent data; Vercel runs the application and API.
+The frontend and API live in the same Next.js app. Neon stores persistent data; Vercel runs the application.
 
 ## Included
 
-- Owner login, logout, and session endpoints
+- Multi-user login (isolated hubs), logout, and session endpoints
+- CLI to create users and set passwords
 - Scrypt password hashing
 - HttpOnly, Secure, SameSite=Strict session cookie
 - Database-backed login throttling
-- Opportunities CRUD, search, filters, pagination, deadlines, and follow-ups
+- Opportunities CRUD, search, filters, pagination, deadlines, opening dates, and follow-ups
 - Tasks CRUD with optional opportunity linkage
 - Dashboard attention queries
 - Audit log
@@ -72,13 +73,28 @@ AUTH_SECRET=...
 
 Drizzle CLI loads `.env.local` first, so the same file is used by the app and migration commands.
 
-### Create the database schema
-
-For the first setup, generate and apply the initial migration:
+### Create the database schema and first user
 
 ```bash
-npm run db:setup
+npm run db:migrate
+npm run auth:bootstrap
 ```
+
+`auth:bootstrap` creates your user from `OWNER_EMAIL` / `OWNER_PASSWORD_HASH` and attaches any existing opportunities/tasks to that account.
+
+### Add another person (isolated empty hub)
+
+```bash
+npm run auth:create-user
+```
+
+### Change a password later
+
+```bash
+npm run auth:set-password
+```
+
+Login reads password hashes from the `users` table (not from env after bootstrap).
 
 ### Verify configuration
 

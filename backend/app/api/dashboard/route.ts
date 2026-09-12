@@ -5,6 +5,6 @@ import { requireSession } from "@/lib/session";
 export const runtime = "nodejs";
 
 export const GET = withErrorHandling(async () => {
-  await requireSession();
-  return ok(await getDashboard());
+  const session = await requireSession();
+  return ok(await getDashboard(session.userId));
 });

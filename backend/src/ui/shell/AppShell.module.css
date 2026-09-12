@@ -253,7 +253,8 @@
 
 .content {
   flex: 1;
-  padding: 30px 26px 48px;
+  padding: 28px 28px 56px;
+  width: 100%;
 }
 
 .mobileNav {
@@ -270,11 +271,21 @@
   }
 
   .header {
-    padding: 0 16px;
+    padding: 0 14px;
+    height: 58px;
+    flex-basis: 58px;
+  }
+
+  .searchInput::placeholder {
+    color: transparent;
+  }
+
+  .iconBtn {
+    display: none;
   }
 
   .content {
-    padding: 20px 16px 92px;
+    padding: 18px 14px calc(88px + env(safe-area-inset-bottom, 0px));
   }
 
   .mobileNav {
@@ -283,11 +294,12 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 62px;
-    background: var(--surface);
+    height: calc(62px + env(safe-area-inset-bottom, 0px));
+    padding: 6px 4px env(safe-area-inset-bottom, 0px);
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(10px);
     border-top: 1px solid var(--border);
     z-index: 30;
-    padding: 6px 4px;
   }
 
   .mobileNavItem {
@@ -301,8 +313,9 @@
     background: none;
     color: var(--text-faint);
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 650;
     cursor: pointer;
+    min-height: 48px;
   }
 
   .mobileNavItem[data-active="true"] {

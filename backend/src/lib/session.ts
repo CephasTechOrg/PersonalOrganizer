@@ -5,19 +5,22 @@ import { UnauthorizedError } from "@/lib/errors";
 
 const COOKIE_NAME = "personal_hub_session";
 const ISSUER = "personal-hub";
-const AUDIENCE = "personal-hub-owner";
+const AUDIENCE = "personal-hub-user";
 const SESSION_SECONDS = 60 * 60 * 24 * 7;
+
+export type SessionUser = {
+  userId: string;
+  email: string;
+};
 
 function secret() {
   return new TextEncoder().encode(getEnv().AUTH_SECRET);
 }
 
-export async function createSessionToken() {
-  const email = getEnv().OWNER_EMAIL;
-
-  return new SignJWT({ email, role: "owner" })
+export async function createSessionToken(user: SessionUser) {
+  return new SignJWT({ email: user.email, role: "user" })
     .setProtectedHeader({ alg: "HS256" })
-    .setSubject(email)
+    .setSubject(user.userId)
     .setIssuer(ISSUER)
     .setAudience(AUDIENCE)
     .setIssuedAt()
@@ -25,20 +28,22 @@ export async function createSessionToken() {
     .sign(secret());
 }
 
-export async function verifySessionToken(token: string) {
+export async function verifySessionToken(token: string): Promise<SessionUser> {
   const { payload } = await jwtVerify(token, secret(), {
     issuer: ISSUER,
     audience: AUDIENCE,
   });
 
-  if (payload.sub !== getEnv().OWNER_EMAIL || payload.role !== "owner") {
+  const userId = payload.sub;
+  const email = typeof payload.email === "string" ? payload.email : null;
+  if (!userId || !email || payload.role !== "user") {
     throw new UnauthorizedError();
   }
 
-  return { email: payload.sub };
+  return { userId, email };
 }
 
-export async function requireSession() {
+export async function requireSession(): Promise<SessionUser> {
   const store = await cookies();
   const token = store.get(COOKIE_NAME)?.value;
   if (!token) throw new UnauthorizedError();

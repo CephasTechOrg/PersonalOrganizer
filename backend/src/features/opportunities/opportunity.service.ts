@@ -20,11 +20,12 @@ import type {
   UpdateOpportunityInput,
 } from "./opportunity.schemas";
 
-export async function createOpportunity(input: CreateOpportunityInput) {
+export async function createOpportunity(userId: string, input: CreateOpportunityInput) {
   const db = getDb();
   const now = new Date();
   const values = {
     ...input,
+    userId,
     appliedAt: ["applied", "waiting", "interview", "accepted", "rejected"].includes(input.status)
       ? now
       : undefined,
@@ -36,14 +37,14 @@ export async function createOpportunity(input: CreateOpportunityInput) {
     entityType: "opportunity",
     entityId: created.id,
     action: "created",
-    metadata: { status: created.status, type: created.type },
+    metadata: { status: created.status, type: created.type, userId },
   });
   return created;
 }
 
-export async function listOpportunities(query: OpportunityListQuery) {
+export async function listOpportunities(userId: string, query: OpportunityListQuery) {
   const db = getDb();
-  const conditions: SQL[] = [];
+  const conditions: SQL[] = [eq(opportunities.userId, userId)];
 
   if (query.status) conditions.push(eq(opportunities.status, query.status));
   if (query.type) conditions.push(eq(opportunities.type, query.type));
@@ -64,7 +65,7 @@ export async function listOpportunities(query: OpportunityListQuery) {
     );
   }
 
-  const where = conditions.length ? and(...conditions) : undefined;
+  const where = and(...conditions);
   const sortColumn = {
     deadline: opportunities.deadlineAt,
     opening: opportunities.openAt,
@@ -89,16 +90,20 @@ export async function listOpportunities(query: OpportunityListQuery) {
   return { rows, total: totalRows[0]?.value ?? 0 };
 }
 
-export async function getOpportunity(id: string) {
+export async function getOpportunity(userId: string, id: string) {
   const db = getDb();
-  const [row] = await db.select().from(opportunities).where(eq(opportunities.id, id)).limit(1);
+  const [row] = await db
+    .select()
+    .from(opportunities)
+    .where(and(eq(opportunities.id, id), eq(opportunities.userId, userId)))
+    .limit(1);
   if (!row) throw new NotFoundError("Opportunity not found");
   return row;
 }
 
-export async function updateOpportunity(id: string, input: UpdateOpportunityInput) {
+export async function updateOpportunity(userId: string, id: string, input: UpdateOpportunityInput) {
   const db = getDb();
-  await getOpportunity(id);
+  await getOpportunity(userId, id);
 
   const values: Partial<typeof opportunities.$inferInsert> = { ...input, updatedAt: new Date() };
   if (
@@ -115,26 +120,28 @@ export async function updateOpportunity(id: string, input: UpdateOpportunityInpu
   const [updated] = await db
     .update(opportunities)
     .set(values)
-    .where(eq(opportunities.id, id))
+    .where(and(eq(opportunities.id, id), eq(opportunities.userId, userId)))
     .returning();
 
   await recordAudit({
     entityType: "opportunity",
     entityId: id,
     action: "updated",
-    metadata: { fields: Object.keys(input) },
+    metadata: { fields: Object.keys(input), userId },
   });
   return updated;
 }
 
-export async function deleteOpportunity(id: string) {
+export async function deleteOpportunity(userId: string, id: string) {
   const db = getDb();
-  const existing = await getOpportunity(id);
-  await db.delete(opportunities).where(eq(opportunities.id, id));
+  const existing = await getOpportunity(userId, id);
+  await db
+    .delete(opportunities)
+    .where(and(eq(opportunities.id, id), eq(opportunities.userId, userId)));
   await recordAudit({
     entityType: "opportunity",
     entityId: id,
     action: "deleted",
-    metadata: { title: existing.title },
+    metadata: { title: existing.title, userId },
   });
 }

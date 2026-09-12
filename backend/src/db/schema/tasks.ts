@@ -1,11 +1,15 @@
 import { index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { opportunities } from "./opportunities";
 import { priorityEnum, taskKindEnum, taskStatusEnum } from "./enums";
+import { users } from "./users";
 
 export const tasks = pgTable(
   "tasks",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     opportunityId: uuid("opportunity_id").references(() => opportunities.id, {
       onDelete: "cascade",
     }),
@@ -21,6 +25,7 @@ export const tasks = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
+    index("tasks_user_idx").on(table.userId),
     index("tasks_opportunity_idx").on(table.opportunityId),
     index("tasks_status_idx").on(table.status),
     index("tasks_kind_idx").on(table.kind),

@@ -1,6 +1,6 @@
 import { createHmac } from "node:crypto";
 import { eq } from "drizzle-orm";
-import { authThrottles } from "@/db/schema";
+import { authThrottles, users } from "@/db/schema";
 import { getDb } from "@/lib/db";
 import { getEnv } from "@/lib/env";
 import { RateLimitError, UnauthorizedError } from "@/lib/errors";
@@ -60,22 +60,29 @@ async function clearFailures(key: string) {
   await db.delete(authThrottles).where(eq(authThrottles.key, key));
 }
 
-export async function authenticateOwner(request: Request, email: string, password: string) {
+export async function authenticateUser(request: Request, email: string, password: string) {
   const normalizedEmail = email.toLowerCase();
   const key = clientKey(request, normalizedEmail);
   await assertLoginAllowed(key);
 
-  const env = getEnv();
-  const emailMatches = normalizedEmail === env.OWNER_EMAIL;
-  const passwordMatches = await verifyPassword(password, env.OWNER_PASSWORD_HASH);
+  const db = getDb();
+  const [user] = await db.select().from(users).where(eq(users.email, normalizedEmail)).limit(1);
+  const passwordMatches = user ? await verifyPassword(password, user.passwordHash) : false;
 
-  if (!emailMatches || !passwordMatches) {
+  if (!user || !passwordMatches) {
     await registerFailure(key);
     await recordAudit({ entityType: "auth", action: "login_failed" });
     throw new UnauthorizedError("Invalid email or password");
   }
 
   await clearFailures(key);
-  await recordAudit({ entityType: "auth", action: "login_succeeded" });
-  return { email: env.OWNER_EMAIL };
+  await recordAudit({
+    entityType: "auth",
+    action: "login_succeeded",
+    metadata: { userId: user.id },
+  });
+  return { userId: user.id, email: user.email };
 }
+
+/** @deprecated Use authenticateUser */
+export const authenticateOwner = authenticateUser;

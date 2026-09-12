@@ -69,6 +69,17 @@ export function HomeView() {
   const counts = dash.counts;
   const totalTracked = Object.values(counts).reduce((sum, n) => sum + (n ?? 0), 0);
 
+  const attentionCount = dash.needsAttention.length;
+  const openingCount = dash.openingSoon?.length ?? 0;
+  const openTaskCount = [...dash.overdueTasks, ...dash.upcomingTasks].length;
+
+  const subtitle =
+    attentionCount > 0
+      ? `${attentionCount} item${attentionCount === 1 ? "" : "s"} need attention right now.`
+      : openingCount > 0
+        ? `You're caught up. ${openingCount} opening soon.`
+        : "You're caught up — nothing urgent today.";
+
   const summary = [
     {
       label: "Need to apply",
@@ -87,25 +98,17 @@ export function HomeView() {
       href: "/opportunities?status=in_progress",
     },
     {
-      label: "Applied",
-      value: counts.applied ?? 0,
-      meta: "Awaiting review",
+      label: "Applied / waiting",
+      value: (counts.applied ?? 0) + (counts.waiting ?? 0) + (counts.interview ?? 0),
+      meta: "In the pipeline",
       tone: "muted",
       dot: "#12b76a",
       href: "/opportunities?status=applied",
     },
     {
-      label: "Waiting",
-      value: (counts.waiting ?? 0) + (counts.interview ?? 0),
-      meta: "Updates pending",
-      tone: "muted",
-      dot: "#f79009",
-      href: "/opportunities?status=waiting",
-    },
-    {
       label: "Due this week",
       value: dash.dueSoon.length,
-      meta: "Upcoming deadlines",
+      meta: openingCount > 0 ? `${openingCount} opening soon` : "Upcoming deadlines",
       tone: dash.dueSoon.length > 0 ? "soon" : "muted",
       dot: "#98a2b3",
       href: "/opportunities?sort=deadline&order=asc",
@@ -115,12 +118,23 @@ export function HomeView() {
   return (
     <div className={styles.page}>
       <div className={styles.mainCol}>
-        <div>
-          <h1 className={styles.greeting}>
-            {greeting()}, {firstName}
-          </h1>
-          <p className={styles.subtitle}>Here&apos;s what needs your attention.</p>
-        </div>
+        <header className={styles.hero}>
+          <div className={styles.heroText}>
+            <p className={styles.eyebrow}>Your private hub</p>
+            <h1 className={styles.greeting}>
+              {greeting()}, {firstName}
+            </h1>
+            <p className={styles.subtitle}>{subtitle}</p>
+          </div>
+          <div className={styles.heroActions}>
+            <button type="button" className="btn btn-primary" onClick={() => quickAdd.open("opportunity")}>
+              + Add opportunity
+            </button>
+            <button type="button" className="btn btn-secondary" onClick={() => quickAdd.open("task")}>
+              + Add task
+            </button>
+          </div>
+        </header>
 
         <div className={styles.summary}>
           {summary.map((s) => (
@@ -141,8 +155,8 @@ export function HomeView() {
           <div className={styles.sectionHead}>
             <div className={styles.sectionTitleRow}>
               <span className={styles.sectionTitle}>Needs attention</span>
-              {dash.needsAttention.length > 0 ? (
-                <span className={styles.attentionCount}>{dash.needsAttention.length}</span>
+              {attentionCount > 0 ? (
+                <span className={styles.attentionCount}>{attentionCount}</span>
               ) : null}
             </div>
             <Link href="/opportunities" className={styles.viewAll}>
@@ -150,11 +164,16 @@ export function HomeView() {
             </Link>
           </div>
 
-          <div className="card">
-            {dash.needsAttention.length === 0 ? (
+          <div className={`card ${styles.listCard}`}>
+            {attentionCount === 0 ? (
               <EmptyState
                 title="You're caught up"
                 description="No applications need your attention right now."
+                action={
+                  <button type="button" className="btn btn-secondary btn-sm" onClick={() => quickAdd.open("opportunity")}>
+                    Add opportunity
+                  </button>
+                }
               />
             ) : (
               dash.needsAttention.map((opp) => <AttentionRow key={opp.id} opp={opp} />)
@@ -163,12 +182,10 @@ export function HomeView() {
         </section>
 
         {totalTracked > 0 ? (
-          <section className="card" style={{ padding: "16px 18px 18px" }}>
+          <section className={`card ${styles.pipelineCard}`}>
             <div className={styles.sectionHead} style={{ margin: 0 }}>
               <span className={styles.railTitle}>Pipeline</span>
-              <Link href="/opportunities" className={styles.viewAll}>
-                View all opportunities
-              </Link>
+              <span className={styles.pipelineTotal}>{totalTracked} tracked</span>
             </div>
             <div className={styles.pipeline}>
               {PIPELINE.map((p) => {
@@ -178,13 +195,18 @@ export function HomeView() {
                     : counts[p.key] ?? 0;
                 const pct = totalTracked ? Math.round((value / totalTracked) * 100) : 0;
                 return (
-                  <div key={p.key} className={styles.pipelineSeg} style={{ flex: Math.max(value, 1) }}>
+                  <Link
+                    key={p.key}
+                    href={`/opportunities?status=${p.key === "accepted" ? "accepted" : p.key}`}
+                    className={styles.pipelineSeg}
+                    style={{ flex: Math.max(value, 1) }}
+                  >
                     <div className={styles.pipelineBar} style={{ background: p.color }} />
                     <div className={styles.pipelineLabel}>{p.label}</div>
                     <div className={styles.pipelineValue}>
                       {value} · {pct}%
                     </div>
-                  </div>
+                  </Link>
                 );
               })}
             </div>
@@ -194,12 +216,11 @@ export function HomeView() {
 
       <aside className={styles.rail}>
         <DeadlinesCard opportunities={dash.dueSoon} />
-        {dash.openingSoon && dash.openingSoon.length > 0 ? (
-          <OpeningSoonCard opportunities={dash.openingSoon} />
-        ) : null}
+        {openingCount > 0 ? <OpeningSoonCard opportunities={dash.openingSoon} /> : null}
         {dash.followUps.length > 0 ? <FollowUpsCard opportunities={dash.followUps} /> : null}
         <TasksCard
           tasks={[...dash.overdueTasks, ...dash.upcomingTasks]}
+          openCount={openTaskCount}
           onAdd={() => quickAdd.open("task")}
         />
       </aside>
@@ -228,7 +249,7 @@ function AttentionRow({ opp }: { opp: Opportunity }) {
   }
 
   return (
-    <div className={styles.attentionRow} style={{ borderLeftColor: rel.tone === "overdue" ? "#f04438" : "#f79009" }}>
+    <div className={styles.attentionRow} data-tone={rel.tone}>
       <Monogram name={opp.organization ?? opp.title} size={36} />
       <div className={styles.attentionBody}>
         <Link href={`/opportunities/${opp.id}`} className={styles.attentionTitle}>
@@ -242,7 +263,11 @@ function AttentionRow({ opp }: { opp: Opportunity }) {
           </span>
         </div>
       </div>
-      <button type="button" className={`btn ${isApply ? "btn-primary" : "btn-secondary"} btn-sm`} onClick={onAction}>
+      <button
+        type="button"
+        className={`btn ${isApply ? "btn-primary" : "btn-secondary"} btn-sm ${styles.rowAction}`}
+        onClick={onAction}
+      >
         {isApply ? (
           <>
             {actionLabel}
@@ -258,7 +283,7 @@ function AttentionRow({ opp }: { opp: Opportunity }) {
 
 function DeadlinesCard({ opportunities }: { opportunities: Opportunity[] }) {
   return (
-    <div className="card" style={{ padding: "16px 16px 12px" }}>
+    <div className={`card ${styles.railCard}`}>
       <div className={styles.railHead}>
         <span className={styles.railTitle}>Upcoming deadlines</span>
         <Link href="/opportunities?sort=deadline&order=asc" className={styles.viewAll}>
@@ -294,7 +319,7 @@ function DeadlinesCard({ opportunities }: { opportunities: Opportunity[] }) {
 
 function OpeningSoonCard({ opportunities }: { opportunities: Opportunity[] }) {
   return (
-    <div className="card" style={{ padding: "16px 16px 12px" }}>
+    <div className={`card ${styles.railCard}`}>
       <div className={styles.railHead}>
         <span className={styles.railTitle}>Opening soon</span>
         <Link href="/opportunities?status=upcoming" className={styles.viewAll}>
@@ -326,7 +351,7 @@ function OpeningSoonCard({ opportunities }: { opportunities: Opportunity[] }) {
 
 function FollowUpsCard({ opportunities }: { opportunities: Opportunity[] }) {
   return (
-    <div className="card" style={{ padding: "16px 16px 12px" }}>
+    <div className={`card ${styles.railCard}`}>
       <div className={styles.railHead}>
         <span className={styles.railTitle}>Follow-ups due</span>
       </div>
@@ -345,7 +370,15 @@ function FollowUpsCard({ opportunities }: { opportunities: Opportunity[] }) {
   );
 }
 
-function TasksCard({ tasks, onAdd }: { tasks: Task[]; onAdd: () => void }) {
+function TasksCard({
+  tasks,
+  openCount,
+  onAdd,
+}: {
+  tasks: Task[];
+  openCount: number;
+  onAdd: () => void;
+}) {
   const toast = useToast();
   const [pending, setPending] = useState<Record<string, boolean>>({});
 
@@ -363,11 +396,13 @@ function TasksCard({ tasks, onAdd }: { tasks: Task[]; onAdd: () => void }) {
   const visible = tasks.slice(0, 5);
 
   return (
-    <div className="card" style={{ padding: "16px 16px 12px" }}>
+    <div className={`card ${styles.railCard}`}>
       <div className={styles.railHead}>
-        <span className={styles.railTitle}>Tasks</span>
+        <span className={styles.railTitle}>
+          Tasks{openCount > 0 ? <span className={styles.softCount}>{openCount}</span> : null}
+        </span>
         <Link href="/tasks" className={styles.viewAll}>
-          View all tasks
+          View all
         </Link>
       </div>
       {visible.length === 0 ? (
@@ -414,7 +449,7 @@ function HomeSkeleton() {
       <div className={styles.mainCol}>
         <div className="skeleton" style={{ height: 30, width: 280 }} />
         <div className={styles.summary}>
-          {[0, 1, 2, 3, 4].map((i) => (
+          {[0, 1, 2, 3].map((i) => (
             <div key={i} className={styles.stat}>
               <div className="skeleton" style={{ height: 12, width: 80 }} />
               <div className="skeleton" style={{ height: 22, width: 40, marginTop: 12 }} />

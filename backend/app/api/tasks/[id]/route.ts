@@ -11,23 +11,23 @@ const idSchema = z.string().uuid();
 type Context = { params: Promise<{ id: string }> };
 
 export const GET = withErrorHandling(async (_request: Request, context: Context) => {
-  await requireSession();
+  const session = await requireSession();
   const { id } = await context.params;
-  return ok(await getTask(idSchema.parse(id)));
+  return ok(await getTask(session.userId, idSchema.parse(id)));
 });
 
 export const PATCH = withErrorHandling(async (request: Request, context: Context) => {
   assertSameOrigin(request);
-  await requireSession();
+  const session = await requireSession();
   const { id } = await context.params;
   const input = await parseJson(request, updateTaskSchema);
-  return ok(await updateTask(idSchema.parse(id), input));
+  return ok(await updateTask(session.userId, idSchema.parse(id), input));
 });
 
 export const DELETE = withErrorHandling(async (request: Request, context: Context) => {
   assertSameOrigin(request);
-  await requireSession();
+  const session = await requireSession();
   const { id } = await context.params;
-  await deleteTask(idSchema.parse(id));
+  await deleteTask(session.userId, idSchema.parse(id));
   return noContent();
 });

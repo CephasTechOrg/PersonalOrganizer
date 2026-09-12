@@ -1,10 +1,14 @@
 import { index, pgTable, text, timestamp, uuid, boolean } from "drizzle-orm/pg-core";
 import { opportunityStatusEnum, opportunityTypeEnum, priorityEnum } from "./enums";
+import { users } from "./users";
 
 export const opportunities = pgTable(
   "opportunities",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     title: text("title").notNull(),
     organization: text("organization"),
     type: opportunityTypeEnum("type").notNull().default("program"),
@@ -26,6 +30,7 @@ export const opportunities = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
+    index("opportunities_user_idx").on(table.userId),
     index("opportunities_status_idx").on(table.status),
     index("opportunities_type_idx").on(table.type),
     index("opportunities_open_idx").on(table.openAt),

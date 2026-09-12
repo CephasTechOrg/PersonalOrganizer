@@ -1,4 +1,4 @@
-import { and, asc, count, gte, inArray, isNotNull, lt, lte } from "drizzle-orm";
+import { and, asc, count, eq, gte, inArray, isNotNull, lt, lte } from "drizzle-orm";
 import { opportunities, tasks } from "@/db/schema";
 import { getDb } from "@/lib/db";
 
@@ -6,12 +6,13 @@ const ACTIVE_APPLICATION_STATUSES = ["saved", "need_to_apply", "in_progress"] as
 const WAITING_STATUSES = ["applied", "waiting"] as const;
 const ACTIVE_TASK_STATUSES = ["todo", "in_progress"] as const;
 
-export async function getDashboard() {
+export async function getDashboard(userId: string) {
   const db = getDb();
   const now = new Date();
   const sevenDays = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-
   const thirtyDays = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+  const ownedOpp = eq(opportunities.userId, userId);
+  const ownedTask = eq(tasks.userId, userId);
 
   const [
     statusCounts,
@@ -26,12 +27,14 @@ export async function getDashboard() {
     db
       .select({ status: opportunities.status, count: count() })
       .from(opportunities)
+      .where(ownedOpp)
       .groupBy(opportunities.status),
     db
       .select()
       .from(opportunities)
       .where(
         and(
+          ownedOpp,
           inArray(opportunities.status, [...ACTIVE_APPLICATION_STATUSES]),
           isNotNull(opportunities.deadlineAt),
           gte(opportunities.deadlineAt, now),
@@ -45,6 +48,7 @@ export async function getDashboard() {
       .from(opportunities)
       .where(
         and(
+          ownedOpp,
           inArray(opportunities.status, [...ACTIVE_APPLICATION_STATUSES]),
           isNotNull(opportunities.deadlineAt),
           lt(opportunities.deadlineAt, now),
@@ -57,6 +61,7 @@ export async function getDashboard() {
       .from(opportunities)
       .where(
         and(
+          ownedOpp,
           inArray(opportunities.status, [...WAITING_STATUSES]),
           isNotNull(opportunities.followUpAt),
           lte(opportunities.followUpAt, now),
@@ -69,6 +74,7 @@ export async function getDashboard() {
       .from(tasks)
       .where(
         and(
+          ownedTask,
           inArray(tasks.status, [...ACTIVE_TASK_STATUSES]),
           isNotNull(tasks.dueAt),
           gte(tasks.dueAt, now),
@@ -82,6 +88,7 @@ export async function getDashboard() {
       .from(tasks)
       .where(
         and(
+          ownedTask,
           inArray(tasks.status, [...ACTIVE_TASK_STATUSES]),
           isNotNull(tasks.dueAt),
           lt(tasks.dueAt, now),
@@ -94,6 +101,7 @@ export async function getDashboard() {
       .from(opportunities)
       .where(
         and(
+          ownedOpp,
           inArray(opportunities.status, [...ACTIVE_APPLICATION_STATUSES]),
           isNotNull(opportunities.deadlineAt),
           lt(opportunities.deadlineAt, now),
@@ -104,6 +112,7 @@ export async function getDashboard() {
       .from(opportunities)
       .where(
         and(
+          ownedOpp,
           isNotNull(opportunities.openAt),
           gte(opportunities.openAt, now),
           lte(opportunities.openAt, thirtyDays),
